@@ -1,1 +1,37 @@
-@import '~antd/dist/antd.css';
+@import "~antd/dist/antd.css";
+
+$sideMargin: 15px;
+
+#rootLayout {
+    height: 100vh;
+    width: 100vw;
+    .header {
+        display: flex;
+        padding: 0px;
+        .logo {
+            margin-left: $sideMargin;
+            color: #fff;
+            font-family: Helvetica;
+            font-weight: bold;
+            font-size: 14pt;
+            #logosvg {
+                max-height: 60%;
+            }
+            #logotext {
+                margin-left: 5px;
+            }
+        }
+        .headerMenuContainer {
+            flex: auto;
+            padding-right: $sideMargin;
+            .headerMenu{
+                display: flex;
+                justify-content: flex-end;
+            }
+        }
+    }
+
+    .site-layout-background {
+        background: #fff;
+    }
+}
