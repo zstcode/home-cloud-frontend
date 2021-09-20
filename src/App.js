@@ -10,10 +10,12 @@ const { Header, Content, Sider } = Layout;
 
 const App = () => {
   const profileMenu = (
-    <Menu id="profileMenu" theme="dark" style={{ "min-width": "10vw" }}>
-      <Menu.Item key="profile" icon={<ProfileOutlined />} style={{ "min-height": "7vh" }}>Profile</Menu.Item>
-      <Menu.Item key="settings" icon={<SettingOutlined />} style={{ "min-height": "7vh" }}>Settings</Menu.Item>
-      <Menu.Item key="Logout" icon={<LogoutOutlined />} style={{ "min-height": "7vh" }}>Logout</Menu.Item>
+    <Menu id="profileMenu" theme="dark">
+      <Menu.Item id="profileUsername" key="username" disabled >username</Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="profile" icon={<ProfileOutlined />} className="profileMenuItem">Profile</Menu.Item>
+      <Menu.Item key="settings" icon={<SettingOutlined />} className="profileMenuItem">Settings</Menu.Item>
+      <Menu.Item key="Logout" icon={<LogoutOutlined />} className="profileMenuItem">Logout</Menu.Item>
     </Menu>
   );
 
