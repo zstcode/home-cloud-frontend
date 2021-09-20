@@ -1,17 +1,19 @@
-import { Layout, Menu, Breadcrumb, Avatar, Button, Dropdown } from 'antd';
+import { Layout, Menu, Avatar, Button, Dropdown } from 'antd';
 import { ShareAltOutlined, UserOutlined, StarOutlined, DashboardOutlined } from '@ant-design/icons';
 import { FileOutlined, TagOutlined, SendOutlined, ProfileOutlined, SecurityScanOutlined } from '@ant-design/icons';
 import { NotificationOutlined, SettingOutlined, SearchOutlined, LogoutOutlined } from '@ant-design/icons';
+import FileList from './components/Files/FileList';
+
 
 import './App.scss';
 
 const { SubMenu } = Menu;
-const { Header, Content, Sider } = Layout;
+const { Header, Sider } = Layout;
 
 const App = () => {
   const profileMenu = (
     <Menu id="profileMenu" theme="dark">
-      <Menu.Item id="profileUsername" key="username" disabled >username</Menu.Item>
+      <Menu.Item id="profileUsername" key="username" disabled>username</Menu.Item>
       <Menu.Divider />
       <Menu.Item key="profile" icon={<ProfileOutlined />} className="profileMenuItem">Profile</Menu.Item>
       <Menu.Item key="settings" icon={<SettingOutlined />} className="profileMenuItem">Settings</Menu.Item>
@@ -31,8 +33,7 @@ const App = () => {
             <Button ghost size="large" icon={<SearchOutlined />} className="headerMenuButtom"></Button>
             <Button ghost size="large" icon={<NotificationOutlined />} className="headerMenuButtom"></Button>
             <Dropdown overlay={profileMenu} placement="bottomLeft" trigger={["hover", "click"]}>
-
-              <Button ghost size="large" icon={<Avatar id="avatar" size="large" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />} className="avatarButtom"></Button>
+              <Button ghost size="large" icon={<Avatar id="avatar" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />} className="avatarButtom"></Button>
             </Dropdown>
 
           </div>
@@ -42,8 +43,7 @@ const App = () => {
         <Sider className="site-layout-background" breakpoint="md" collapsedWidth={0}>
           <Menu
             mode="inline"
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['dashboard']}
+            defaultSelectedKeys={['dashboard']}
             style={{ height: '100%', borderRight: 0 }}
           >
             <Menu.Item key="dashboard" icon={<DashboardOutlined />}>Dashboard</Menu.Item>
@@ -64,23 +64,7 @@ const App = () => {
             </SubMenu>
           </Menu>
         </Sider>
-        <Layout style={{ padding: '0 24px 24px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-          </Breadcrumb>
-          <Content
-            className="site-layout-background"
-            style={{
-              padding: 24,
-              margin: 0,
-              minHeight: 280,
-            }}
-          >
-            Content
-          </Content>
-        </Layout>
+        <FileList />
       </Layout>
     </Layout >);
 };

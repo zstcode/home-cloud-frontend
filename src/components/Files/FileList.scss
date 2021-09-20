@@ -1,0 +1,16 @@
+#contentLayoutArea {
+    #navigateBreadcrum {
+        padding: 10px 24px;
+        background: #fff;
+    }
+    .pageTitle {
+        padding: 0px 24px 10px;
+    }
+    .contentArea{
+        margin: 10px 10px 20px;
+        min-height: 50vh;
+        #fileTable {
+            margin: 10px;
+        }
+    }
+}
