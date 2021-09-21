@@ -91,7 +91,7 @@
 }
 
 #profileMenu {
-    width: 15vw;
+    width: 192px;
     #profileUsername {
         color: #fff;
         text-align: center;
@@ -109,7 +109,7 @@
         }
     }
     @media (orientation: portrait) {
-        width: 30vw;
+        width: 120px;
         #profileUsername {
             height: 6vh;
             line-height: 6vh;
