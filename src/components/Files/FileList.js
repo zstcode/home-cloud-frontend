@@ -1,9 +1,9 @@
 import { Layout, Breadcrumb, PageHeader, Tag, Table, Space, Button } from "antd";
-import { Menu, Dropdown, Drawer, Modal, Form, Upload, message } from "antd";
-import { SettingOutlined, SyncOutlined, FileAddOutlined } from '@ant-design/icons';
-import { FolderAddOutlined, UploadOutlined } from '@ant-design/icons';
+import { Menu, Dropdown, Drawer, Modal, Form, message } from "antd";
+import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import { React, useState } from "react";
-import Rename from "./utils/Rename";
+import FileDialog from "./utils/FileDialog";
+import { filemanageMenuItems, uploadMenuItems, settingsMenuItems } from "./utils/FileDropdownMenu";
 
 import "./FileList.scss";
 
@@ -23,29 +23,13 @@ function showConfirm() {
     });
 }
 
-const uploadProps = {
-    name: 'file',
-    action: 'http://127.0.0.1:3000/qfqwjbhnqkwdhju',
-    headers: {
-        authorization: 'authorization-text',
-    },
-    onChange(info) {
-        if (info.file.status !== 'uploading') {
-            console.log(info.file, info.fileList);
-        }
-        if (info.file.status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-        }
-    },
-};
 
 function FileList() {
 
     const [nameDiaglogvisible, setNameDiaglogvisible] = useState(false);
     const [form] = Form.useForm();
     const [refreshSpin, setRefreshSpin] = useState(false);
+    const [detailVisable, setDetailVisable] = useState(false);
 
     const handleSubmit = (values) => {
         console.log(values);
@@ -141,7 +125,7 @@ function FileList() {
                         <a>Manage</a>
                     </Dropdown>
                     <a>Download</a>
-                    <a>Details</a>
+                    <a onClick={() => setDetailVisable(true)}>Details</a>
                 </Space>
             ),
         },
@@ -151,7 +135,7 @@ function FileList() {
             responsive: ["xs"],
             render: () => (
                 <Space size="middle">
-                    <a>Details</a>
+                    <a onClick={() => setDetailVisable(true)}>Details</a>
                 </Space>
             ),
         },
@@ -180,62 +164,44 @@ function FileList() {
             tags: ['cool'],
         },
     ];
+
+    const uploadMenuCallBack = {
+        nfile: () => setNameDiaglogvisible(true),
+        nfolder: () => setNameDiaglogvisible(true),
+    };
+    const settingsMenuCallBack = {
+        encryption: () => showConfirm(),
+    };
+    const fileManegeCallback = {
+        rename: () => setNameDiaglogvisible(true),
+        delete: () => showConfirm(),
+        copy: () => setNameDiaglogvisible(true),
+        move: () => setNameDiaglogvisible(true),
+        download: () => message.success('Download process has started'),
+        favorite: () => message.success('Add to favorite success'),
+    };
+
     const uploadMenu = (
         <Menu className="fileglobaldropMenu">
-            <Menu.Item key="nfile" icon={<FileAddOutlined />} className="filedropMenuItem"
-                onClick={() => setNameDiaglogvisible(true)}>New File</Menu.Item>
-            <Menu.Item key="nfolder" icon={<FolderAddOutlined />} className="filedropMenuItem"
-                onClick={() => setNameDiaglogvisible(true)}>New Folder</Menu.Item>
-            <Menu.Item key="uploadfile" icon={<UploadOutlined />} className="filedropMenuItem">
-                <Upload {...uploadProps}>Upload File</Upload>
-            </Menu.Item>
+            {uploadMenuItems(false, uploadMenuCallBack)}
         </Menu>
     );
+
     const globalManageMenu = (
         <Menu className="fileglobaldropMenu">
-            <Menu.Item key="nfile" className="filedropMenuItem showinMobile"
-                onClick={() => setNameDiaglogvisible(true)}>New File</Menu.Item>
-            <Menu.Item key="nfolder" className="filedropMenuItem showinMobile"
-                onClick={() => setNameDiaglogvisible(true)}>New Folder</Menu.Item>
-            <Menu.Item key="uploadfile" className="filedropMenuItem showinMobile">
-                <Upload {...uploadProps}>Upload File</Upload>
-            </Menu.Item>
-            <Menu.Item key="encryption" className="filedropMenuItem showinMobile"
-                onClick={() => showConfirm}>Encryption</Menu.Item>
-            <Menu.Item key="rename" className="filedropMenuItem showinMobile"
-                onClick={() => setNameDiaglogvisible(true)}>Rename</Menu.Item>
-            <Menu.Item key="delete" className="filedropMenuItem"
-                onClick={showConfirm}>Delete</Menu.Item>
-            <Menu.Item key="copy" className="filedropMenuItem"
-                onClick={() => setNameDiaglogvisible(true)} >Copy</Menu.Item>
-            <Menu.Item key="move" className="filedropMenuItem"
-                onClick={() => setNameDiaglogvisible(true)}>Move</Menu.Item>
-            <Menu.Item key="download" className="filedropMenuItem"
-                onClick={() => message.success('Download process has started')}>Download</Menu.Item>
-            <Menu.Item key="favorite" className="filedropMenuItem"
-                onClick={() => message.success('Add to favorite success')}>Favorite</Menu.Item>
+            {uploadMenuItems(true, uploadMenuCallBack)}
+            {filemanageMenuItems(true, fileManegeCallback)}
+            {settingsMenuItems(true, settingsMenuCallBack)}
         </Menu>
     );
     const folderSettingMenu = (
         <Menu className="fileglobaldropMenu">
-            <Menu.Item key="encryption" className="filedropMenuItem"
-                onClick={showConfirm}>Encryption</Menu.Item>
+            {settingsMenuItems(false, settingsMenuCallBack)}
         </Menu>
     )
     const manageMenu = (
         <Menu className="filedropMenu">
-            <Menu.Item key="rename" className="filedropMenuItem"
-                onClick={() => setNameDiaglogvisible(true)}>Rename</Menu.Item>
-            <Menu.Item key="delete" className="filedropMenuItem"
-                onClick={showConfirm}>Delete</Menu.Item>
-            <Menu.Item key="copy" className="filedropMenuItem"
-                onClick={() => setNameDiaglogvisible(true)} >Copy</Menu.Item>
-            <Menu.Item key="move" className="filedropMenuItem"
-                onClick={() => setNameDiaglogvisible(true)} >Move</Menu.Item>
-            <Menu.Item key="download" className="filedropMenuItem"
-                onClick={() => message.success('Download process has started')}>Download</Menu.Item>
-            <Menu.Item key="favorite" className="filedropMenuItem"
-                onClick={() => message.success('Add to favorite success')}>Favorite</Menu.Item>
+            {filemanageMenuItems(false, fileManegeCallback)}
         </Menu>
     );
     return (
@@ -247,12 +213,13 @@ function FileList() {
             <PageHeader className="site-layout-background pageTitle"
                 onBack={() => null} title="Documents" tags={<Tag color="blue">doc</Tag>} />
 
-            <Drawer title="Details" placement="right" visible="">
+            <Drawer title="Details" placement="right" visible={detailVisable}
+                onClose={() => setDetailVisable(false)}>
                 <div>File name: qfmnikaof.txt</div>
                 <div>size: 8.9MB</div>
             </Drawer>
 
-            <Rename visible={nameDiaglogvisible} form={form}
+            <FileDialog visible={nameDiaglogvisible} form={form}
                 handleSubmit={handleSubmit} handleCancel={handleCancel} />
 
             <Content className="site-layout-background contentArea">

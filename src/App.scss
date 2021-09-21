@@ -97,12 +97,12 @@
         text-align: center;
         font-family: $mainFont;
         font-size: 14pt;
-        height: 8vh;
-        line-height: 8vh;
+        height: 54px;
+        line-height: 54px;
         cursor: default;
     }
     .profileMenuItem {
-        height: 8vh;
+        height: 54px;
         font-size: 12pt;
         svg {
             font-size: 12pt;
@@ -111,12 +111,12 @@
     @media (orientation: portrait) {
         width: 120px;
         #profileUsername {
-            height: 6vh;
-            line-height: 6vh;
+            height: 45px;
+            line-height: 45px;
             font-size: 12pt;
         }
         .profileMenuItem {
-            height: 6vh;
+            height: 45px;
         }
     }
 }
