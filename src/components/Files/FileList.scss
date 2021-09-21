@@ -1,3 +1,5 @@
+@import "../../config.scss";
+
 #contentLayoutArea {
     #navigateBreadcrum {
         padding: 10px 24px;
@@ -7,10 +9,37 @@
         padding: 0px 24px 10px;
     }
     .contentArea{
-        margin: 10px 10px 20px;
         min-height: 50vh;
         #fileTable {
-            margin: 10px;
+            margin: 20px;
         }
+        #fileHeader {
+            display: flex;
+            height: 42px;
+            margin: 10px;
+            #fileListType{
+                margin-left: 30px;
+                line-height: 42px;
+                font-family: $mainFont;
+                font-size: 12pt;
+                font-weight: bold;
+                flex:0 1 auto;
+            }
+            #controlHeader {
+                flex:1 1 auto;
+                margin-right: 10px;
+                display: flex;
+                justify-content: flex-end;
+                .controlHeaderButton {
+                    margin: 5px;
+                }
+                @media screen and (max-width: 575px) {
+                    #uploadButton, #refreshButton, #settingButton {
+                        display: none;
+                    }
+                }
+            }
+        }
+
     }
 }

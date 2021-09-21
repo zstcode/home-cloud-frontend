@@ -1,4 +1,5 @@
-import { Layout, Breadcrumb, PageHeader, Tag, Table, Space } from "antd";
+import { Layout, Breadcrumb, PageHeader, Tag, Table, Space, Button } from "antd";
+import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import React from "react";
 
 import "./FileList.scss";
@@ -14,7 +15,7 @@ function FileList() {
             responsive: ["xs"],
             render: record => (
                 <React.Fragment>
-                    <a style={{marginRight:"5px"}}>{record.name}</a>
+                    <a style={{ marginRight: "5px" }}>{record.name}</a>
                     <>
                         {record.tags.map(tag => {
                             let color = tag.length > 5 ? 'geekblue' : 'green';
@@ -37,7 +38,7 @@ function FileList() {
             title: 'File Name',
             dataIndex: 'name',
             key: 'name',
-            responsive: ["md"],
+            responsive: ["sm"],
             render: text => (<a>{text}</a>),
             sorter: (a, b) => { return a.name > b.name },
         },
@@ -54,7 +55,7 @@ function FileList() {
             key: 'tags',
             dataIndex: 'tags',
             width: "7vw",
-            responsive: ["md"],
+            responsive: ["sm"],
             render: tags => (
                 <>
                     {tags.map(tag => {
@@ -83,7 +84,7 @@ function FileList() {
             title: 'Action',
             key: 'action',
             width: "9vw",
-            responsive: ["md"],
+            responsive: ["sm"],
             render: () => (
                 <Space size="middle">
                     <a>Manage</a>
@@ -136,8 +137,17 @@ function FileList() {
             <PageHeader className="site-layout-background pageTitle"
                 onBack={() => null} title="Documents" tags={<Tag color="blue">doc</Tag>} />
             <Content className="site-layout-background contentArea">
+                <div id="fileHeader">
+                    <div id="fileListType">Files</div>
+                    <div id="controlHeader">
+                        <Button id="uploadButton" type="primary" className="controlHeaderButton">+ Add</Button>
+                        <Button id="manageButton" type="primary" className="controlHeaderButton">Manage</Button>
+                        <Button id="refreshButton" ghost type="primary" className="controlHeaderButton" icon={<SyncOutlined />}></Button>
+                        <Button id="settingButton" ghost type="primary" className="controlHeaderButton" icon={<SettingOutlined />}></Button>
+                    </div>
+                </div>
                 <div id="fileTable">
-                    <Table columns={columns} dataSource={data} />
+                    <Table columns={columns} dataSource={data} rowSelection={{}} />
                 </div>
             </Content>
         </Layout>

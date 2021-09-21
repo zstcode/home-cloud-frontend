@@ -40,11 +40,10 @@ const App = () => {
         </div>
       </Header>
       <Layout>
-        <Sider className="site-layout-background" breakpoint="md" collapsedWidth={0}>
-          <Menu
+        <Sider className="site-layout-background" breakpoint="lg" collapsedWidth={0} width="200px" id="sider">
+          <Menu id="sideMenu"
             mode="inline"
             defaultSelectedKeys={['dashboard']}
-            style={{ height: '100%', borderRight: 0 }}
           >
             <Menu.Item key="dashboard" icon={<DashboardOutlined />}>Dashboard</Menu.Item>
             <SubMenu key="files" icon={<FileOutlined />} title="Files">
