@@ -1,0 +1,41 @@
+@import "../../config.scss";
+
+#profileLayout {
+    background: #fff;
+    .profilePageHeader {
+        padding-bottom: 0px;
+    }
+
+    #profileContent {
+        margin: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        #avatarContainer {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 20px;
+            #avatar {
+                border: 3px solid rgb(240, 10, 10);
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+        #profileFormContainer {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            #profileForm {
+                width: 800px;
+                #Profiletail {
+                    display: flex;
+                    justify-content: center;
+                }
+                #ProfiletailSubmitButton {
+                    margin-left: 20px;
+                }
+            }
+        }
+    }
+}

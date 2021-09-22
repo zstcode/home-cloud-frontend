@@ -3,6 +3,7 @@ import { ShareAltOutlined, UserOutlined, StarOutlined, DashboardOutlined } from 
 import { FileOutlined, TagOutlined, SendOutlined, ProfileOutlined, SecurityScanOutlined } from '@ant-design/icons';
 import { NotificationOutlined, SettingOutlined, SearchOutlined, LogoutOutlined } from '@ant-design/icons';
 import FileList from './components/Files/FileList';
+import Profile from './components/Settings/Profile';
 
 
 import './App.scss';
@@ -63,7 +64,7 @@ const App = () => {
             </SubMenu>
           </Menu>
         </Sider>
-        <FileList />
+        <Profile />
       </Layout>
     </Layout >);
 };
