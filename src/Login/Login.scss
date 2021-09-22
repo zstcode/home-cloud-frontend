@@ -1,0 +1,67 @@
+@import "../common/config.scss";
+
+#loginRoot {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-image: url("https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg");
+    background-repeat: no-repeat;
+    background-position: center 110px;
+    background-size: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    #loginContainer {
+        width: 500px;
+        display: flex;
+        flex-wrap: wrap;
+
+        #loginLogoContainer {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            #loginLogo {
+                max-height: 64px;
+            }
+            #loginLogoText {
+                line-height: 80px;
+                font-family: $mainFont;
+                font-size: 18pt;
+                font-weight: bold;
+                margin-left: 20px;
+            }
+        }
+        #loginTabContainer {
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+
+            #loginTabs {
+                width: 80%;
+            }
+        }
+        @media screen and (max-width: 575px) {
+            width: 300px;
+            #loginLogoContainer {
+                height: 50px;
+                #loginLogo {
+                    max-height: 32px;
+                }
+                #loginLogoText {
+                    line-height: 50px;
+                    font-size: 14pt;
+                    font-weight: bold;
+                    margin-left: 10px;
+                }
+            }
+            #buttonContainer {
+                display: flex;
+                justify-content: center;
+            }
+        }
+    }
+}

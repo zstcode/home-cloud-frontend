@@ -2,8 +2,8 @@ import { Layout, Breadcrumb, PageHeader, Tag, Table, Space, Button } from "antd"
 import { Menu, Dropdown, Drawer, Modal, Form, message } from "antd";
 import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import { React, useState } from "react";
-import FileDialog from "./utils/FileDialog";
-import { filemanageMenuItems, uploadMenuItems, settingsMenuItems } from "./utils/FileDropdownMenu";
+import FileDialog from "./components/FileDialog";
+import { filemanageMenuItems, uploadMenuItems, settingsMenuItems } from "./components/FileDropdownMenu";
 
 import "./FileList.scss";
 
