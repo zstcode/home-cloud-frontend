@@ -2,8 +2,8 @@ import { Layout, Menu, Avatar, Button, Dropdown } from 'antd';
 import { ShareAltOutlined, UserOutlined, StarOutlined, DashboardOutlined } from '@ant-design/icons';
 import { FileOutlined, TagOutlined, SendOutlined, ProfileOutlined, SecurityScanOutlined } from '@ant-design/icons';
 import { NotificationOutlined, SettingOutlined, SearchOutlined, LogoutOutlined } from '@ant-design/icons';
-import FileList from './components/Files/FileList';
-import Profile from './components/Settings/Profile';
+import FileList from './Files/FileList';
+import Profile from './Settings/Profile';
 
 
 import './App.scss';
@@ -64,7 +64,7 @@ const App = () => {
             </SubMenu>
           </Menu>
         </Sider>
-        <Profile />
+        <FileList />
       </Layout>
     </Layout >);
 };
