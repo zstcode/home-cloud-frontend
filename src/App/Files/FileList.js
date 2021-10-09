@@ -32,7 +32,7 @@ function FileList() {
     const [form] = Form.useForm();
     const [refreshSpin, setRefreshSpin] = useState(false);
     const [detailVisable, setDetailVisable] = useState(false);
-    const [folder, setFolder] = useState({ name: "", id: "", root: false, path: [] });
+    const [folder, setFolder] = useState({ name: "", id: "", root: true, path: [] });
     const [fileList, setFileList] = useState([]);
     const history = useHistory();
 
@@ -193,7 +193,7 @@ function FileList() {
             name: 'bhjauifhoqihfoqwi.png',
             size: "5.9MB",
             time: '2012-11-12 18:21:05',
-            tag: '',
+            tag: 'test',
         },
         {
             key: '3',
