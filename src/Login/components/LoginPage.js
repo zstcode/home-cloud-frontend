@@ -1,13 +1,9 @@
 import { Form, Input, Checkbox, Button } from "antd";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-
-const onFinish = (values) => {
-    console.log('Success:', values);
-};
-
-const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-};
+import axios from "axios";
+import { DeriveMasterKey, DeriveAuthKey } from "../../utils/crypto";
+import { useHistory, useLocation } from "react-router";
+import { message } from "antd";
 
 const formLayout = {
     labelCol: { span: 8 },
@@ -28,9 +24,28 @@ const formTailLayout = {
 };
 
 function LoginPage(props) {
+    const history = useHistory();
+    const location = useLocation();
+
+    async function LoginHandler(values) {
+        let formData = new URLSearchParams();
+        formData.append("username", values.username);
+        const preLogin = await axios.post("/api/pre-login", formData);
+        const account_salt = preLogin.data["account_salt"];
+        const masterKey = await DeriveMasterKey(values.password, account_salt, 512);
+        const authKey = await DeriveAuthKey(masterKey, 256);
+        formData.append("password", authKey);
+        try {
+            await axios.post("/api/login", formData);
+            let { from } = location.state || { from: { pathname: "/" } };
+            history.replace(from);
+        } catch (error) {
+            message.error(error.response.data.message);
+        }
+    }
     return (
         <Form name="login" {...formLayout} initialValues={{ remember: true }}
-            onFinish={onFinish} onFinishFailed={onFinishFailed}>
+            onFinish={LoginHandler}>
 
             <Form.Item label="Username" name="username"
                 rules={[{ required: true, message: 'Please input your username!' }]}>

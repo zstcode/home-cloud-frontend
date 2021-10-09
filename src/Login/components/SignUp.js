@@ -1,12 +1,8 @@
 import { Form, Input, Checkbox, Button } from "antd";
-
-const onFinish = (values) => {
-    console.log('Success:', values);
-};
-
-const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-};
+import axios from "axios";
+import { DeriveMasterKey, DeriveAuthKey, GenerateSalt } from "../../utils/crypto";
+import { useHistory, useLocation } from "react-router";
+import { message } from "antd";
 
 const formLayout = {
     labelCol: { span: 8 },
@@ -27,9 +23,26 @@ const formTailLayout = {
 };
 
 function SignUp(props) {
+
+    const history = useHistory();
+
+    async function registerHandler(values) {
+        let formData = new URLSearchParams();
+        formData.append("username", values.username);
+        const account_salt = await GenerateSalt(256);
+        const masterKey = await DeriveMasterKey(values.password, account_salt, 512);
+        const authKey = await DeriveAuthKey(masterKey, 256);
+        formData.append("password", authKey);
+        formData.append('accountSalt',account_salt);
+        try {
+            await axios.post("/api/register", formData);
+            history.replace("/");
+        } catch (error) {
+            message.error(error.response.data.message);
+        }
+    }
     return (
-        <Form name="signup" {...formLayout} onFinish={onFinish}
-            onFinishFailed={onFinishFailed}>
+        <Form name="signup" {...formLayout} onFinish={registerHandler}>
 
             <Form.Item label="Username" name="username"
                 rules={[{ required: true, message: 'Please input your username!' }]}>

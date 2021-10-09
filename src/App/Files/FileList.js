@@ -1,11 +1,13 @@
 import { Layout, Breadcrumb, PageHeader, Tag, Table, Space, Button } from "antd";
 import { Menu, Dropdown, Drawer, Modal, Form, message } from "antd";
 import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import FileDialog from "./components/FileDialog";
 import { filemanageMenuItems, uploadMenuItems, settingsMenuItems } from "./components/FileDropdownMenu";
 
 import "./FileList.scss";
+import { useHistory, useLocation, useRouteMatch } from "react-router";
+import axios from "axios";
 
 const { Content } = Layout;
 const { confirm } = Modal;
@@ -30,6 +32,58 @@ function FileList() {
     const [form] = Form.useForm();
     const [refreshSpin, setRefreshSpin] = useState(false);
     const [detailVisable, setDetailVisable] = useState(false);
+    const [folder, setFolder] = useState({ name: "", id: "", root: false, path: [] });
+    const [fileList, setFileList] = useState([]);
+    const history = useHistory();
+
+    const match = useRouteMatch();
+
+    async function fetchFolder() {
+        try {
+            const path = match.params[0];
+            let folderPath = "/";
+            if (path.length > 0 && path[path.length - 1] === "/") {
+                folderPath += path.slice(0, path.length - 1)
+            } else {
+                folderPath += path
+            }
+            let formData = new URLSearchParams();
+            formData.append("path", folderPath);
+            const folderData = await axios.post("/api/file/get_info_path", formData)
+            setFolder({
+                name: folderData.data.file.Name,
+                id: folderData.data.file.ID,
+                root: folderData.data.file.ParentId === "00000000-0000-0000-0000-000000000000",
+                path: folderData.data.file.Position.split("/").filter((v) => v.length > 0)
+            })
+            formData = new URLSearchParams();
+            formData.append("dir", folderData.data.file.ID)
+            const fileData = await axios.post("/api/file/list_dir", formData)
+            const files = fileData.data.children.map((v, idx) => {
+                return {
+                    key: idx,
+                    id: v.ID,
+                    name: v.Name,
+                    size: v.Size,
+                    time: v.UpdatedAt.slice(0, 10) + " " + v.UpdatedAt.slice(11, 19),
+                    tag: "Placeholder",
+                }
+            });
+            setFileList(files);
+        } catch (error) {
+            if (error.response.status === 401) {
+                //Temporary fix
+                window.location = "/login"
+            } else {
+                message.error(error.response.data.message)
+            }
+        }
+    }
+
+    // Fetch data when loading
+    // useEffect(() => {
+    //     fetchFolder();
+    // }, [match])
 
     const handleSubmit = (values) => {
         console.log(values);
@@ -50,14 +104,9 @@ function FileList() {
             render: record => (
                 <>
                     <a style={{ marginRight: "5px" }}>{record.name}</a>
-
                     {record.tags.map(tag => {
-                        let color = tag.length > 5 ? 'geekblue' : 'green';
-                        if (tag === 'loser') {
-                            color = 'volcano';
-                        }
                         return (
-                            <Tag color={color} key={tag}>
+                            <Tag color='geekblue' key={tag}>
                                 {tag.toUpperCase()}
                             </Tag>
                         );
@@ -85,25 +134,15 @@ function FileList() {
             responsive: ["md"],
         },
         {
-            title: 'Tags',
-            key: 'tags',
-            dataIndex: 'tags',
+            title: 'Tag',
+            key: 'tag',
+            dataIndex: 'tag',
             width: "7vw",
             responsive: ["sm"],
-            render: tags => (
-                <>
-                    {tags.map(tag => {
-                        let color = tag.length > 5 ? 'geekblue' : 'green';
-                        if (tag === 'loser') {
-                            color = 'volcano';
-                        }
-                        return (
-                            <Tag color={color} key={tag}>
-                                {tag.toUpperCase()}
-                            </Tag>
-                        );
-                    })}
-                </>
+            render: tag => (
+                <Tag color='green' key={tag}>
+                    {tag.toUpperCase()}
+                </Tag>
             ),
         },
         {
@@ -147,21 +186,21 @@ function FileList() {
             name: 'a.txt',
             size: "32KB",
             time: '2012-10-12 15:26:21',
-            tags: ['nice'],
+            tag: 'nice',
         },
         {
             key: '2',
             name: 'bhjauifhoqihfoqwi.png',
             size: "5.9MB",
             time: '2012-11-12 18:21:05',
-            tags: [],
+            tag: '',
         },
         {
             key: '3',
             name: 'afsnwqrfjbqwofq.mkv',
             size: "2.65GB",
             time: '2018-05-04 11:15:05',
-            tags: ['cool'],
+            tag: 'cool',
         },
     ];
 
@@ -207,11 +246,13 @@ function FileList() {
     return (
         <Layout id="contentLayoutArea">
             <Breadcrumb id="navigateBreadcrum">
-                <Breadcrumb.Item>Files</Breadcrumb.Item>
-                <Breadcrumb.Item>Documents</Breadcrumb.Item>
+                {folder.path.length > 0 ? <Breadcrumb.Item>Home</Breadcrumb.Item> : <></>}
+                {folder.path.map((v) => <Breadcrumb.Item>v</Breadcrumb.Item>)}
             </Breadcrumb>
             <PageHeader className="site-layout-background pageTitle"
-                onBack={() => null} title="Documents" tags={<Tag color="blue">doc</Tag>} />
+                backIcon={folder.path.length > 0 ? true : false}
+                onBack={() => null} title={folder.root ? "Home" : folder.name}
+                tags={<Tag color="blue">Placeholder</Tag>} />
 
             <Drawer title="Details" placement="right" visible={detailVisable}
                 onClose={() => setDetailVisable(false)}>
@@ -245,7 +286,9 @@ function FileList() {
                     </div>
                 </div>
                 <div id="fileTable">
+                    {/* <Table columns={columns} dataSource={fileList} rowSelection={{}} /> */}
                     <Table columns={columns} dataSource={data} rowSelection={{}} />
+
                 </div>
             </Content>
         </Layout>

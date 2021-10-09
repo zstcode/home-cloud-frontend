@@ -3,7 +3,7 @@ import { ShareAltOutlined, UserOutlined, StarOutlined, DashboardOutlined } from 
 import { FileOutlined, TagOutlined, SendOutlined, ProfileOutlined, SecurityScanOutlined } from '@ant-design/icons';
 import { NotificationOutlined, SettingOutlined, SearchOutlined, LogoutOutlined } from '@ant-design/icons';
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { useHistory } from "react-router";
+import { Redirect, useHistory } from "react-router";
 import FileList from './Files/FileList';
 import Profile from './Settings/Profile';
 
@@ -59,26 +59,27 @@ const App = () => {
                 <Menu.Item key="/files" icon={<FileOutlined />}>
                   <Link to="/files">My Files</Link>
                 </Menu.Item>
-                <Menu.Item key="/receive" icon={<SendOutlined />}>Shared with you</Menu.Item>
-                <Menu.Item key="/share" icon={<ShareAltOutlined />}>Shared by you</Menu.Item>
+                {/* <Menu.Item key="/receive" icon={<SendOutlined />}>Shared with you</Menu.Item>
+                <Menu.Item key="/share" icon={<ShareAltOutlined />}>Shared by you</Menu.Item> */}
               </SubMenu>
               <SubMenu key="accountSub" icon={<UserOutlined />} title="Account">
                 <Menu.Item key="/profile" icon={<ProfileOutlined />}>
                   <Link to="/profile">Profile</Link>
                 </Menu.Item>
-                <Menu.Item key="/security" icon={<SecurityScanOutlined />}>Security</Menu.Item>
+                {/* <Menu.Item key="/security" icon={<SecurityScanOutlined />}>Security</Menu.Item>
                 <Menu.Item key="/notifications" icon={<NotificationOutlined />}>Notifications</Menu.Item>
-                <Menu.Item key="/settings" icon={<SettingOutlined />}>Settings</Menu.Item>
+                <Menu.Item key="/settings" icon={<SettingOutlined />}>Settings</Menu.Item> */}
               </SubMenu>
               <Menu.Item key="/favorites" icon={<StarOutlined />}>Favorites</Menu.Item>
               <SubMenu key="tagsSub" icon={<TagOutlined />} title="Tags">
-                <Menu.Item key="/tags/guides">guides</Menu.Item>
+                {/* <Menu.Item key="/tags/guides">guides</Menu.Item> */}
               </SubMenu>
             </Menu>
           </Sider>
 
           <Switch>
-            <Route path="/files" component={FileList} />
+            <Route path="/files/(.*)" component={FileList} />
+            <Route exact path="/files" component={() => <Redirect to="/files/" /> } />
             <Route path="/profile" component={Profile} />
           </Switch>
 

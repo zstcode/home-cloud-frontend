@@ -4,10 +4,14 @@ import { FolderAddOutlined, UploadOutlined } from '@ant-design/icons';
 
 const uploadProps = {
     name: 'file',
-    action: 'http://127.0.0.1:3000/qfqwjbhnqkwdhju',
-    headers: {
-        authorization: 'authorization-text',
+    action: 'http://127.0.0.1:8080/api/file/upload',
+    data: {
+        dir: "7d8213af-a291-4a02-bc0c-ac34953dae0c"
     },
+    showUploadList: false,
+    maxCount: 1,
+    withCredentials: true,
+    multiple: true,
     onChange(info) {
         if (info.file.status !== 'uploading') {
             console.log(info.file, info.fileList);
