@@ -1,6 +1,6 @@
 @import "../../common/config.scss";
 
-#contentLayoutArea {
+#fileListArea {
     #navigateBreadcrum {
         padding: 10px 24px;
         background: #fff;
@@ -12,6 +12,13 @@
         min-height: 500px;
         #fileTable {
             margin: 20px;
+            .recordName{
+                cursor: pointer;
+                color: #1890ff;
+                &:hover {
+                    color: #40a9ff;
+                }
+            }
         }
         #fileHeader {
             display: flex;

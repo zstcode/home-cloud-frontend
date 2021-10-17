@@ -3,13 +3,11 @@ import { useLocation } from "react-router";
 import LoginPage from "./components/LoginPage";
 import SignUp from "./components/SignUp";
 
-import "./Login.scss"
-
+import "./Login.scss";
 
 const { TabPane } = Tabs;
 
 function Login(props) {
-
     const location = useLocation();
 
     return (
@@ -20,8 +18,13 @@ function Login(props) {
                     <span id="loginLogoText">Home Cloud System</span>
                 </div>
                 <div id="loginTabContainer">
-                    <Tabs defaultActiveKey={location.pathname === "/signup" ? "1" : "0"}
-                        id="loginTabs" centered>
+                    <Tabs
+                        defaultActiveKey={
+                            location.pathname === "/signup" ? "1" : "0"
+                        }
+                        id="loginTabs"
+                        centered
+                    >
                         <TabPane tab="Login" key="0">
                             <LoginPage />
                         </TabPane>
@@ -32,7 +35,6 @@ function Login(props) {
                 </div>
             </div>
         </Layout>
-    )
-
+    );
 }
 export default Login;

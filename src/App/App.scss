@@ -4,6 +4,7 @@
     position: absolute;
     height: 100%;
     width: 100%;
+    overflow: hidden;
     .header {
         display: flex;
         height: $headerHeight;
@@ -27,7 +28,7 @@
                 margin-left: 5px;
                 line-height: $headerHeight;
             }
-            @media screen and (max-width: 575px) {
+            @media screen and (max-width: 991px) {
                 display: none;
             }
         }
@@ -78,13 +79,29 @@
     .site-layout-background {
         background: #fff;
     }
+
+    #contentLayoutArea {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
     @media screen and (max-width: 991px) {
         #sider {
             position: absolute;
             z-index: 100;
+            #sideMenu {
+                overflow-y: auto;
+            }
         }
         .ant-layout-sider-zero-width-trigger {
-            top: 90px;
+            position: absolute;
+            top: -46px;
+        }
+    }
+    @media screen and (min-width: 992px) {
+        #sider {
+            overflow-y: auto;
+            overflow-x: hidden;
         }
     }
 }

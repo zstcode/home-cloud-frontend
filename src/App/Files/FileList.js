@@ -1,298 +1,340 @@
-import { Layout, Breadcrumb, PageHeader, Tag, Table, Space, Button } from "antd";
-import { Menu, Dropdown, Drawer, Modal, Form, message } from "antd";
-import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+    Layout,
+    Breadcrumb,
+    PageHeader,
+    Tag,
+    Table,
+    Space,
+    Button,
+} from "antd";
+import { Drawer, Modal, message } from "antd";
 import { React, useEffect, useState } from "react";
-import FileDialog from "./components/FileDialog";
-import { filemanageMenuItems, uploadMenuItems, settingsMenuItems } from "./components/FileDropdownMenu";
+import NewFileDialog from "./dialogs/NewFileDialog";
+import NewFolderDialog from "./dialogs/NewFolderDialog";
+import RefreshButton from "./components/RefreshButton";
+
+import UploadMenu from "./menus/UploadMenu";
+import ManageMenu from "./menus/ManageMenu";
+import SettingMenu from "./menus/SettingMenu";
+import FileManageMenu from "./menus/FileManageMenu";
 
 import "./FileList.scss";
-import { useHistory, useLocation, useRouteMatch } from "react-router";
+import { useRouteMatch } from "react-router";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const { Content } = Layout;
 const { confirm } = Modal;
 
-function showConfirm() {
+const fetchInfo = async (path, setFolder, setFileList) => {
+    try {
+        let folderPath = "/";
+        if (path.length > 0 && path[path.length - 1] === "/") {
+            folderPath += path.slice(0, path.length - 1);
+        } else {
+            folderPath += path;
+        }
+        let formData = new URLSearchParams();
+        formData.append("dir", folderPath);
+        const folderData = await axios.post("/api/file/get_info", formData);
+        if (folderData.data.type === "folder") {
+            setFolder({
+                name: folderData.data.info.Name,
+                root: folderData.data.root,
+                path: folderData.data.info.Position,
+            });
+        }
+
+        formData = new URLSearchParams();
+        formData.append("dir", folderPath);
+        const fileData = await axios.post("/api/file/list_dir", formData);
+        const files = fileData.data.children.map((v, idx) => {
+            return {
+                key: idx,
+                dir: v.IsDir,
+                name: v.Name,
+                size: v.Size,
+                time:
+                    v.UpdatedAt.slice(0, 10) + " " + v.UpdatedAt.slice(11, 19),
+                tag: "Placeholder",
+                position: v.Position,
+            };
+        });
+        setFileList(files);
+    } catch (error) {
+        message.error(error.response.data.message);
+    }
+};
+
+const handleDelete = (paths, syncFolder, setSelectedRows) => {
+    const title =
+        paths.length === 1
+            ? `"Do you want to delete ${paths[0]}?"`
+            : "Do you want to delete these items?";
     confirm({
-        title: 'Do you Want to delete these items?',
-        content: 'Some descriptions',
+        title,
         onOk() {
-            console.log('OK');
+            const deleteFile = async (paths) => {
+                await Promise.all(
+                    paths.map(async (v) => {
+                        let formData = new URLSearchParams();
+                        formData.append("dir", v);
+                        try {
+                            const res = await axios.post(
+                                "/api/file/delete",
+                                formData
+                            );
+                            if (res.data.success === 0) {
+                                message.info(`Delete ${v} success! `);
+                            } else {
+                                message.error(
+                                    `Delete ${v} error: ${res.data.message}! `
+                                );
+                            }
+                        } catch (error) {
+                            message.error(
+                                `Delete ${v} error: ${error.response.data.message}! `
+                            );
+                        }
+                    })
+                );
+                setSelectedRows([]);
+                await syncFolder();
+            };
+            deleteFile(paths);
         },
         onCancel() {
-            console.log('Cancel');
+            return;
         },
     });
-}
+};
 
+function FileList(props) {
+    const [fileDiaglogvisible, setFileDiaglogvisible] = useState(false);
+    const [folderDiaglogvisible, setFolderDiaglogvisible] = useState(false);
 
-function FileList() {
-
-    const [nameDiaglogvisible, setNameDiaglogvisible] = useState(false);
-    const [form] = Form.useForm();
-    const [refreshSpin, setRefreshSpin] = useState(false);
     const [detailVisable, setDetailVisable] = useState(false);
-    const [folder, setFolder] = useState({ name: "", id: "", root: true, path: [] });
+    const [folder, setFolder] = useState({
+        name: "",
+        id: "",
+        root: true,
+        path: "",
+    });
     const [fileList, setFileList] = useState([]);
-    const history = useHistory();
+    const [selectedRows, setSelectedRows] = useState([]);
 
     const match = useRouteMatch();
 
-    async function fetchFolder() {
-        try {
-            const path = match.params[0];
-            let folderPath = "/";
-            if (path.length > 0 && path[path.length - 1] === "/") {
-                folderPath += path.slice(0, path.length - 1)
-            } else {
-                folderPath += path
-            }
-            let formData = new URLSearchParams();
-            formData.append("path", folderPath);
-            const folderData = await axios.post("/api/file/get_info_path", formData)
-            setFolder({
-                name: folderData.data.file.Name,
-                id: folderData.data.file.ID,
-                root: folderData.data.file.ParentId === "00000000-0000-0000-0000-000000000000",
-                path: folderData.data.file.Position.split("/").filter((v) => v.length > 0)
-            })
-            formData = new URLSearchParams();
-            formData.append("dir", folderData.data.file.ID)
-            const fileData = await axios.post("/api/file/list_dir", formData)
-            const files = fileData.data.children.map((v, idx) => {
-                return {
-                    key: idx,
-                    id: v.ID,
-                    name: v.Name,
-                    size: v.Size,
-                    time: v.UpdatedAt.slice(0, 10) + " " + v.UpdatedAt.slice(11, 19),
-                    tag: "Placeholder",
-                }
-            });
-            setFileList(files);
-        } catch (error) {
-            if (error.response.status === 401) {
-                //Temporary fix
-                window.location = "/login"
-            } else {
-                message.error(error.response.data.message)
-            }
-        }
-    }
+    const syncFolder = async () =>
+        await fetchInfo(match.params[0], setFolder, setFileList);
 
     // Fetch data when loading
-    // useEffect(() => {
-    //     fetchFolder();
-    // }, [match])
-
-    const handleSubmit = (values) => {
-        console.log(values);
-        form.resetFields();
-        setNameDiaglogvisible(false);
-    }
-
-    const handleCancel = () => {
-        setNameDiaglogvisible(false)
-        form.resetFields()
-    };
+    useEffect(() => {
+        fetchInfo(match.params[0], setFolder, setFileList);
+    }, [match]);
 
     const columns = [
         {
-            title: 'File Name',
-            key: 'name',
-            responsive: ["xs"],
-            render: record => (
+            title: "File Name",
+            key: "name",
+            render: (record) => (
                 <>
-                    <a style={{ marginRight: "5px" }}>{record.name}</a>
-                    {record.tags.map(tag => {
-                        return (
-                            <Tag color='geekblue' key={tag}>
-                                {tag.toUpperCase()}
-                            </Tag>
-                        );
-                    })}
-
+                    {console.log(record.dir)}
+                    {record.dir === 1 ? (
+                        <Link to={"/files" + record.position}>
+                            {record.name}
+                        </Link>
+                    ) : (
+                        <span className="recordName">{record.name}</span>
+                    )}
                 </>
-
             ),
-            sorter: (a, b) => { return a.name > b.name },
+            sorter: (a, b) => {
+                return a.name > b.name;
+            },
         },
         {
-            title: 'File Name',
-            dataIndex: 'name',
-            key: 'name',
-            responsive: ["sm"],
-            render: text => (<a>{text}</a>),
-            sorter: (a, b) => { return a.name > b.name },
-        },
-        {
-            title: 'File Size',
-            dataIndex: 'size',
-            key: 'size',
+            title: "File Size",
+            dataIndex: "size",
+            key: "size",
             width: "8vw",
-            sorter: (a, b) => { return a.size > b.size },
+            sorter: (a, b) => {
+                return a.size > b.size;
+            },
             responsive: ["md"],
         },
         {
-            title: 'Tag',
-            key: 'tag',
-            dataIndex: 'tag',
+            title: "Tag",
+            key: "tag",
+            dataIndex: "tag",
             width: "7vw",
             responsive: ["sm"],
-            render: tag => (
-                <Tag color='green' key={tag}>
+            render: (tag) => (
+                <Tag color="green" key={tag}>
                     {tag.toUpperCase()}
                 </Tag>
             ),
         },
         {
-            title: 'Last Modified Time',
-            dataIndex: 'time',
-            key: 'time',
+            title: "Last Modified Time",
+            dataIndex: "time",
+            key: "time",
             width: "13vw",
             responsive: ["lg"],
-            sorter: (a, b) => { return a.time > b.time },
+            sorter: (a, b) => {
+                return a.time > b.time;
+            },
         },
         {
-            title: 'Action',
-            key: 'action',
+            title: "Action",
+            key: "action",
             width: "9vw",
             responsive: ["sm"],
-            render: () => (
+            render: (record) => (
                 <Space size="middle">
-                    <Dropdown overlay={manageMenu} placement="bottomCenter" trigger={["click"]}>
-                        <a>Manage</a>
-                    </Dropdown>
-                    <a>Download</a>
-                    <a onClick={() => setDetailVisable(true)}>Details</a>
+                    <form method="post" action="/api/file/get_file">
+                        <input
+                            name="dir"
+                            value={record.position}
+                            hidden
+                            readOnly
+                        />
+                        <Button type="link" size="small" htmlType="submit">
+                            Download
+                        </Button>
+                    </form>
+                    <FileManageMenu
+                        callback={fileManegeCallback}
+                        path={record.position}
+                    />
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={() => setDetailVisable(true)}
+                    >
+                        Details
+                    </Button>
                 </Space>
             ),
         },
         {
-            title: 'Action',
-            key: 'action',
+            title: "Action",
+            key: "action",
             responsive: ["xs"],
             render: () => (
                 <Space size="middle">
-                    <a onClick={() => setDetailVisable(true)}>Details</a>
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={() => setDetailVisable(true)}
+                    >
+                        Details
+                    </Button>
                 </Space>
             ),
-        },
-    ];
-
-    const data = [
-        {
-            key: '1',
-            name: 'a.txt',
-            size: "32KB",
-            time: '2012-10-12 15:26:21',
-            tag: 'nice',
-        },
-        {
-            key: '2',
-            name: 'bhjauifhoqihfoqwi.png',
-            size: "5.9MB",
-            time: '2012-11-12 18:21:05',
-            tag: 'test',
-        },
-        {
-            key: '3',
-            name: 'afsnwqrfjbqwofq.mkv',
-            size: "2.65GB",
-            time: '2018-05-04 11:15:05',
-            tag: 'cool',
         },
     ];
 
     const uploadMenuCallBack = {
-        nfile: () => setNameDiaglogvisible(true),
-        nfolder: () => setNameDiaglogvisible(true),
+        nfile: () => setFileDiaglogvisible(true),
+        nfolder: () => setFolderDiaglogvisible(true),
+        upload: syncFolder,
     };
     const settingsMenuCallBack = {
-        encryption: () => showConfirm(),
+        encryption: () => message.error("Encryption is not supported now! "),
     };
     const fileManegeCallback = {
-        rename: () => setNameDiaglogvisible(true),
-        delete: () => showConfirm(),
-        copy: () => setNameDiaglogvisible(true),
-        move: () => setNameDiaglogvisible(true),
-        download: () => message.success('Download process has started'),
-        favorite: () => message.success('Add to favorite success'),
+        rename: () => message.error("Rename is not supported now! "),
+        delete: (paths) => handleDelete(paths, syncFolder, setSelectedRows),
+        copy: () => message.error("Copy is not supported now! "),
+        move: () => message.error("Move is not supported now! "),
+        favorite: () => message.error("Favorite is not supported now!"),
     };
 
-    const uploadMenu = (
-        <Menu className="fileglobaldropMenu">
-            {uploadMenuItems(false, uploadMenuCallBack)}
-        </Menu>
-    );
-
-    const globalManageMenu = (
-        <Menu className="fileglobaldropMenu">
-            {uploadMenuItems(true, uploadMenuCallBack)}
-            {filemanageMenuItems(true, fileManegeCallback)}
-            {settingsMenuItems(true, settingsMenuCallBack)}
-        </Menu>
-    );
-    const folderSettingMenu = (
-        <Menu className="fileglobaldropMenu">
-            {settingsMenuItems(false, settingsMenuCallBack)}
-        </Menu>
-    )
-    const manageMenu = (
-        <Menu className="filedropMenu">
-            {filemanageMenuItems(false, fileManegeCallback)}
-        </Menu>
-    );
     return (
-        <Layout id="contentLayoutArea">
+        <div id="fileListArea">
             <Breadcrumb id="navigateBreadcrum">
-                {folder.path.length > 0 ? <Breadcrumb.Item>Home</Breadcrumb.Item> : <></>}
-                {folder.path.map((v) => <Breadcrumb.Item>v</Breadcrumb.Item>)}
+                {folder.path !== "/" ? (
+                    <Breadcrumb.Item>
+                        <Link to="/">Home</Link>
+                    </Breadcrumb.Item>
+                ) : (
+                    <></>
+                )}
+                {folder.path
+                    .split("/")
+                    .filter((v) => v.length > 0)
+                    .map((v) => (
+                        <Breadcrumb.Item>{v}</Breadcrumb.Item>
+                    ))}
             </Breadcrumb>
-            <PageHeader className="site-layout-background pageTitle"
+            <PageHeader
+                className="site-layout-background pageTitle"
                 backIcon={folder.path.length > 0 ? true : false}
-                onBack={() => null} title={folder.root ? "Home" : folder.name}
-                tags={<Tag color="blue">Placeholder</Tag>} />
+                onBack={() => null}
+                title={folder.root ? "Home" : folder.name}
+                tags={<Tag color="blue">Placeholder</Tag>}
+            />
 
-            <Drawer title="Details" placement="right" visible={detailVisable}
-                onClose={() => setDetailVisable(false)}>
+            <Drawer
+                title="Details"
+                placement="right"
+                visible={detailVisable}
+                onClose={() => setDetailVisable(false)}
+            >
                 <div>File name: qfmnikaof.txt</div>
                 <div>size: 8.9MB</div>
             </Drawer>
 
-            <FileDialog visible={nameDiaglogvisible} form={form}
-                handleSubmit={handleSubmit} handleCancel={handleCancel} />
+            <NewFileDialog
+                visible={fileDiaglogvisible}
+                setVisible={setFileDiaglogvisible}
+                path={folder.path}
+                syncFolder={syncFolder}
+            />
+            <NewFolderDialog
+                visible={folderDiaglogvisible}
+                setVisible={setFolderDiaglogvisible}
+                path={folder.path}
+                syncFolder={syncFolder}
+            />
 
             <Content className="site-layout-background contentArea">
                 <div id="fileHeader">
                     <div id="fileListType">Files</div>
                     <div id="controlHeader">
-                        <Dropdown overlay={uploadMenu} placement="bottomCenter" trigger={["click"]}>
-                            <Button id="uploadButton" type="primary"
-                                className="controlHeaderButton">+ Add</Button>
-                        </Dropdown>
-                        <Dropdown overlay={globalManageMenu} placement="bottomLeft" trigger={["click"]}>
-                            <Button id="manageButton" type="primary"
-                                className="controlHeaderButton">Manage</Button>
-                        </Dropdown>
-                        <Button id="refreshButton" ghost type="primary" className="controlHeaderButton"
-                            icon={<SyncOutlined spin={refreshSpin} />}
-                            onClick={() => { setRefreshSpin(true); setTimeout(() => { setRefreshSpin(false); }, 1000) }}
-                        ></Button>
-                        <Dropdown overlay={folderSettingMenu} placement="bottomLeft" trigger={["click"]}>
-                            <Button id="settingButton" ghost type="primary"
-                                className="controlHeaderButton" icon={<SettingOutlined />}></Button>
-                        </Dropdown>
+                        <UploadMenu
+                            path={folder.path}
+                            callback={uploadMenuCallBack}
+                        />
+                        <ManageMenu
+                            callback={{
+                                ...uploadMenuCallBack,
+                                ...fileManegeCallback,
+                                ...settingsMenuCallBack,
+                            }}
+                            paths={selectedRows.map(
+                                (v) => fileList[v].position
+                            )}
+                        />
+                        <RefreshButton syncFolder={syncFolder} />
+                        <SettingMenu callback={settingsMenuCallBack} />
                     </div>
                 </div>
                 <div id="fileTable">
-                    {/* <Table columns={columns} dataSource={fileList} rowSelection={{}} /> */}
-                    <Table columns={columns} dataSource={data} rowSelection={{}} />
-
+                    <Table
+                        columns={columns}
+                        dataSource={fileList}
+                        rowSelection={{
+                            selectedRowKeys: selectedRows,
+                            onChange: (selectedRowKeys, _) =>
+                                setSelectedRows(selectedRowKeys),
+                        }}
+                    />
                 </div>
             </Content>
-        </Layout>
-    )
+        </div>
+    );
 }
 
 export default FileList;

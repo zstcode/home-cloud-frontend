@@ -1,5 +1,5 @@
 import { Form, Input, Checkbox, Button } from "antd";
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { DeriveMasterKey, DeriveAuthKey } from "../../utils/crypto";
 import { useHistory, useLocation } from "react-router";
@@ -7,7 +7,7 @@ import { message } from "antd";
 
 const formLayout = {
     labelCol: { span: 8 },
-    wrapperCol: { span: 16 }
+    wrapperCol: { span: 16 },
 };
 
 const formTailLayout = {
@@ -19,8 +19,8 @@ const formTailLayout = {
         xs: {
             offset: 0,
             span: 24,
-        }
-    }
+        },
+    },
 };
 
 function LoginPage(props) {
@@ -32,7 +32,11 @@ function LoginPage(props) {
         formData.append("username", values.username);
         const preLogin = await axios.post("/api/pre-login", formData);
         const account_salt = preLogin.data["account_salt"];
-        const masterKey = await DeriveMasterKey(values.password, account_salt, 512);
+        const masterKey = await DeriveMasterKey(
+            values.password,
+            account_salt,
+            512
+        );
         const authKey = await DeriveAuthKey(masterKey, 256);
         formData.append("password", authKey);
         try {
@@ -44,20 +48,37 @@ function LoginPage(props) {
         }
     }
     return (
-        <Form name="login" {...formLayout} initialValues={{ remember: true }}
-            onFinish={LoginHandler}>
-
-            <Form.Item label="Username" name="username"
-                rules={[{ required: true, message: 'Please input your username!' }]}>
+        <Form
+            name="login"
+            {...formLayout}
+            initialValues={{ remember: true }}
+            onFinish={LoginHandler}
+        >
+            <Form.Item
+                label="Username"
+                name="username"
+                rules={[
+                    { required: true, message: "Please input your username!" },
+                ]}
+            >
                 <Input prefix={<UserOutlined />} />
             </Form.Item>
 
-            <Form.Item label="Password" name="password"
-                rules={[{ required: true, message: 'Please input your password!' }]}>
+            <Form.Item
+                label="Password"
+                name="password"
+                rules={[
+                    { required: true, message: "Please input your password!" },
+                ]}
+            >
                 <Input.Password prefix={<LockOutlined />} />
             </Form.Item>
 
-            <Form.Item name="remember" valuePropName="checked" {...formTailLayout}>
+            <Form.Item
+                name="remember"
+                valuePropName="checked"
+                {...formTailLayout}
+            >
                 <Checkbox>Remember me</Checkbox>
             </Form.Item>
 
@@ -69,7 +90,7 @@ function LoginPage(props) {
                 </div>
             </Form.Item>
         </Form>
-    )
+    );
 }
 
 export default LoginPage;
