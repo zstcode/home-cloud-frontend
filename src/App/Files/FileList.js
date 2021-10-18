@@ -7,7 +7,7 @@ import {
     Space,
     Button,
 } from "antd";
-import { Drawer, Modal, message } from "antd";
+import { Modal, message } from "antd";
 import { React, useEffect, useState } from "react";
 import {
     StarOutlined,
@@ -18,7 +18,7 @@ import {
     FileMarkdownOutlined,
     FileImageOutlined,
     FilePdfOutlined,
-    FileZipOutlined
+    FileZipOutlined,
 } from "@ant-design/icons";
 
 import NewFileDialog from "./dialogs/NewFileDialog";
@@ -34,6 +34,7 @@ import "./FileList.scss";
 import { useRouteMatch } from "react-router";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import DetailDrawser from "./components/DetailDrawer";
 
 const { Content } = Layout;
 const { confirm } = Modal;
@@ -55,8 +56,14 @@ const fetchInfo = async (path, setFolder, setFileList) => {
                 root: folderData.data.root,
                 path: folderData.data.info.Position,
             });
+        } else {
+            folderPath = folderData.data.parent_info.Position;
+            setFolder({
+                name: folderData.data.parent_info.Name,
+                root: folderData.data.parent_root,
+                path: folderData.data.parent_info.Position,
+            });
         }
-
         formData = new URLSearchParams();
         formData.append("dir", folderPath);
         const fileData = await axios.post("/api/file/list_dir", formData);
@@ -67,8 +74,11 @@ const fetchInfo = async (path, setFolder, setFileList) => {
                 name: v.Name,
                 size: v.Size,
                 type: v.FileType,
-                time:
+                updateTime:
                     v.UpdatedAt.slice(0, 10) + " " + v.UpdatedAt.slice(11, 19),
+                createTime: v.CreatedAt,
+                creator: v.CreatorId,
+                owner: v.OwnerId,
                 favorite: 0,
                 position: v.Position,
             };
@@ -129,11 +139,22 @@ function FileList(props) {
     const [detailVisable, setDetailVisable] = useState(false);
     const [folder, setFolder] = useState({
         name: "",
-        id: "",
         root: true,
         path: "",
     });
     const [fileList, setFileList] = useState([]);
+    const [currentFile, setCurrentFile] = useState({
+        name: "",
+        position: "",
+        size: 0,
+        type: "",
+        createTime: "",
+        updateTime: "",
+        creator: "",
+        owner: "",
+        shared: false,
+        favorite: false,
+    });
     const [selectedRows, setSelectedRows] = useState([]);
 
     const match = useRouteMatch();
@@ -213,12 +234,12 @@ function FileList(props) {
         },
         {
             title: "Last Modified Time",
-            dataIndex: "time",
+            dataIndex: "updateTime",
             key: "time",
             width: "13vw",
             responsive: ["lg"],
             sorter: (a, b) => {
-                return a.time > b.time;
+                return a.updateTime > b.updateTime;
             },
         },
         {
@@ -246,7 +267,21 @@ function FileList(props) {
                     <Button
                         type="link"
                         size="small"
-                        onClick={() => setDetailVisable(true)}
+                        onClick={() => {
+                            setCurrentFile({
+                                name: record.name,
+                                position: record.position,
+                                size: record.size,
+                                type: record.type,
+                                createTime: record.createTime,
+                                updateTime: record.updateTime,
+                                creator: record.creator,
+                                owner: record.owner,
+                                shared: false,
+                                favorite: false,
+                            });
+                            setDetailVisable(true);
+                        }}
                     >
                         Details
                     </Button>
@@ -312,16 +347,6 @@ function FileList(props) {
                 tags={<Tag color="blue">Placeholder</Tag>}
             />
 
-            <Drawer
-                title="Details"
-                placement="right"
-                visible={detailVisable}
-                onClose={() => setDetailVisable(false)}
-            >
-                <div>File name: qfmnikaof.txt</div>
-                <div>size: 8.9MB</div>
-            </Drawer>
-
             <NewFileDialog
                 visible={fileDiaglogvisible}
                 setVisible={setFileDiaglogvisible}
@@ -335,6 +360,11 @@ function FileList(props) {
                 syncFolder={syncFolder}
             />
 
+            <DetailDrawser
+                visible={detailVisable}
+                setVisible={setDetailVisable}
+                file={currentFile}
+            />
             <Content className="site-layout-background contentArea">
                 <div id="fileHeader">
                     <div id="fileListType">Files</div>
