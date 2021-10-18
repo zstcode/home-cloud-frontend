@@ -9,6 +9,18 @@ import {
 } from "antd";
 import { Drawer, Modal, message } from "antd";
 import { React, useEffect, useState } from "react";
+import {
+    StarOutlined,
+    StarFilled,
+    FolderFilled,
+    FileOutlined,
+    FileTextOutlined,
+    FileMarkdownOutlined,
+    FileImageOutlined,
+    FilePdfOutlined,
+    FileZipOutlined
+} from "@ant-design/icons";
+
 import NewFileDialog from "./dialogs/NewFileDialog";
 import NewFolderDialog from "./dialogs/NewFolderDialog";
 import RefreshButton from "./components/RefreshButton";
@@ -54,9 +66,10 @@ const fetchInfo = async (path, setFolder, setFileList) => {
                 dir: v.IsDir,
                 name: v.Name,
                 size: v.Size,
+                type: v.FileType,
                 time:
                     v.UpdatedAt.slice(0, 10) + " " + v.UpdatedAt.slice(11, 19),
-                tag: "Placeholder",
+                favorite: 0,
                 position: v.Position,
             };
         });
@@ -130,50 +143,73 @@ function FileList(props) {
 
     // Fetch data when loading
     useEffect(() => {
-        fetchInfo(match.params[0], setFolder, setFileList);
-    }, [match]);
+        if (props.user.username !== "") {
+            fetchInfo(match.params[0], setFolder, setFileList);
+        }
+    }, [match, props.user]);
 
     const columns = [
         {
             title: "File Name",
             key: "name",
-            render: (record) => (
-                <>
-                    {console.log(record.dir)}
-                    {record.dir === 1 ? (
-                        <Link to={"/files" + record.position}>
+            render: (record) => {
+                let icon;
+                if (record.dir === 1) {
+                    icon = <FolderFilled />;
+                } else {
+                    switch (record.type) {
+                        case "txt":
+                            icon = <FileTextOutlined />;
+                            break;
+                        case "md":
+                            icon = <FileMarkdownOutlined />;
+                            break;
+                        case "image":
+                            icon = <FileImageOutlined />;
+                            break;
+                        case "pdf":
+                            icon = <FilePdfOutlined />;
+                            break;
+                        case "zip":
+                            icon = <FileZipOutlined />;
+                            break;
+                        default:
+                            icon = <FileOutlined />;
+                    }
+                }
+                return (
+                    <Link to={"/files" + record.position}>
+                        <Button type="link" icon={icon} size="small">
                             {record.name}
-                        </Link>
-                    ) : (
-                        <span className="recordName">{record.name}</span>
-                    )}
-                </>
-            ),
+                        </Button>
+                    </Link>
+                );
+            },
             sorter: (a, b) => {
                 return a.name > b.name;
             },
         },
         {
-            title: "File Size",
+            title: "Size",
             dataIndex: "size",
             key: "size",
-            width: "8vw",
+            width: "6vw",
             sorter: (a, b) => {
                 return a.size > b.size;
             },
             responsive: ["md"],
         },
         {
-            title: "Tag",
-            key: "tag",
-            dataIndex: "tag",
-            width: "7vw",
+            title: "Favorite",
+            key: "favorite",
+            width: "6vw",
             responsive: ["sm"],
-            render: (tag) => (
-                <Tag color="green" key={tag}>
-                    {tag.toUpperCase()}
-                </Tag>
-            ),
+            render: (record) =>
+                record.favorite === 0 ? (
+                    <StarOutlined />
+                ) : (
+                    <StarFilled style={{ color: "#f8ca00" }} />
+                ),
         },
         {
             title: "Last Modified Time",
@@ -188,7 +224,7 @@ function FileList(props) {
         {
             title: "Action",
             key: "action",
-            width: "9vw",
+            width: "20vw",
             responsive: ["sm"],
             render: (record) => (
                 <Space size="middle">

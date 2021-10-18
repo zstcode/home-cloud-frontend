@@ -1,4 +1,4 @@
-import { Layout, Menu, Avatar, Button, Dropdown } from "antd";
+import { Layout, Menu, Avatar, Button, Dropdown, message } from "antd";
 import {
     ShareAltOutlined,
     UserOutlined,
@@ -22,6 +22,8 @@ import { Redirect, useHistory, useLocation } from "react-router";
 import FileList from "./Files/FileList";
 import Profile from "./Settings/Profile";
 
+import { useState, useEffect } from "react";
+
 import "./App.scss";
 import axios from "axios";
 
@@ -31,6 +33,7 @@ const { Header, Sider } = Layout;
 const App = () => {
     const history = useHistory();
     const location = useLocation();
+    const [user, setUser] = useState({ username: "", status: 0 });
 
     axios.interceptors.response.use(
         (res) => res,
@@ -44,10 +47,29 @@ const App = () => {
         }
     );
 
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                let res = await axios.get("/api/status/user");
+                if (res.data["success"] === 0) {
+                    setUser({
+                        username: res.data["username"],
+                        status: res.data["status"],
+                    });
+                } else {
+                    message.error(res.data["message"]);
+                }
+            } catch (error) {
+                message.error(error.response.data["message"]);
+            }
+        };
+        fetchUser();
+    }, []);
+
     const profileMenu = (
         <Menu id="profileMenu" theme="dark">
             <Menu.Item id="profileUsername" key="username" disabled>
-                username
+                {user.username}
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item
@@ -182,7 +204,10 @@ const App = () => {
                     className="site-layout-background"
                 >
                     <Switch>
-                        <Route path="/files/(.*)" component={FileList} />
+                        <Route
+                            path="/files/(.*)"
+                            render={() => <FileList user={user} />}
+                        />
                         <Route
                             exact
                             path="/files"
