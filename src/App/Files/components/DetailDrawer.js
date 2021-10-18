@@ -22,7 +22,7 @@ function DetailDrawser(props) {
             placement="right"
             destroyOnClose
             visible={props.visible}
-            width={window.screen.width >= 576 ? 500 : "100vw"}
+            width={window.innerWidth >= 576 ? 500 : "100vw"}
             onClose={() => props.setVisible(false)}
         >
             <List

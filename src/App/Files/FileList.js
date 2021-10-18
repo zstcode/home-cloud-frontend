@@ -55,6 +55,7 @@ const fetchInfo = async (path, setFolder, setFileList) => {
                 name: folderData.data.info.Name,
                 root: folderData.data.root,
                 path: folderData.data.info.Position,
+                encryption: false,
             });
         } else {
             folderPath = folderData.data.parent_info.Position;
@@ -62,6 +63,7 @@ const fetchInfo = async (path, setFolder, setFileList) => {
                 name: folderData.data.parent_info.Name,
                 root: folderData.data.parent_root,
                 path: folderData.data.parent_info.Position,
+                encryption: false,
             });
         }
         formData = new URLSearchParams();
@@ -141,6 +143,7 @@ function FileList(props) {
         name: "",
         root: true,
         path: "",
+        encryption: false,
     });
     const [fileList, setFileList] = useState([]);
     const [currentFile, setCurrentFile] = useState({
@@ -344,7 +347,7 @@ function FileList(props) {
                 backIcon={folder.path.length > 0 ? true : false}
                 onBack={() => null}
                 title={folder.root ? "Home" : folder.name}
-                tags={<Tag color="blue">Placeholder</Tag>}
+                tags={folder.encryption?<Tag color="blue">Encrypted</Tag>:<></>}
             />
 
             <NewFileDialog
