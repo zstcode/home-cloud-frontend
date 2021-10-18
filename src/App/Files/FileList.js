@@ -23,6 +23,7 @@ import {
 
 import NewFileDialog from "./dialogs/NewFileDialog";
 import NewFolderDialog from "./dialogs/NewFolderDialog";
+import PreviewFileDialog from "./dialogs/PreviewFileDialog";
 import RefreshButton from "./components/RefreshButton";
 
 import UploadMenu from "./menus/UploadMenu";
@@ -39,7 +40,13 @@ import DetailDrawser from "./components/DetailDrawer";
 const { Content } = Layout;
 const { confirm } = Modal;
 
-const fetchInfo = async (path, setFolder, setFileList) => {
+const fetchInfo = async (
+    path,
+    setFolder,
+    setFileList,
+    setCurrentFile,
+    setPreviewVisable
+) => {
     try {
         let folderPath = "/";
         if (path.length > 0 && path[path.length - 1] === "/") {
@@ -49,22 +56,42 @@ const fetchInfo = async (path, setFolder, setFileList) => {
         }
         let formData = new URLSearchParams();
         formData.append("dir", folderPath);
-        const folderData = await axios.post("/api/file/get_info", formData);
-        if (folderData.data.type === "folder") {
+        const pathData = await axios.post("/api/file/get_info", formData);
+        if (pathData.data.type === "folder") {
             setFolder({
-                name: folderData.data.info.Name,
-                root: folderData.data.root,
-                path: folderData.data.info.Position,
+                name: pathData.data.info.Name,
+                root: pathData.data.root,
+                path: pathData.data.info.Position,
                 encryption: false,
             });
+            setPreviewVisable(false);
         } else {
-            folderPath = folderData.data.parent_info.Position;
+            folderPath = pathData.data.parent_info.Position;
             setFolder({
-                name: folderData.data.parent_info.Name,
-                root: folderData.data.parent_root,
-                path: folderData.data.parent_info.Position,
+                name: pathData.data.parent_info.Name,
+                root: pathData.data.parent_root,
+                path: pathData.data.parent_info.Position,
                 encryption: false,
             });
+            setCurrentFile({
+                name: pathData.data.info.Name,
+                position: pathData.data.info.Position,
+                size: pathData.data.info.Size,
+                type: pathData.data.info.FileType,
+                updateTime:
+                    pathData.data.info.UpdatedAt.slice(0, 10) +
+                    " " +
+                    pathData.data.info.UpdatedAt.slice(11, 19),
+                createTime:
+                    pathData.data.info.CreatedAt.slice(0, 10) +
+                    " " +
+                    pathData.data.info.CreatedAt.slice(11, 19),
+                creator: pathData.data.info.CreatorId,
+                owner: pathData.data.info.OwnerId,
+                shared: false,
+                favorite: false,
+            });
+            setPreviewVisable(true);
         }
         formData = new URLSearchParams();
         formData.append("dir", folderPath);
@@ -78,7 +105,8 @@ const fetchInfo = async (path, setFolder, setFileList) => {
                 type: v.FileType,
                 updateTime:
                     v.UpdatedAt.slice(0, 10) + " " + v.UpdatedAt.slice(11, 19),
-                createTime: v.CreatedAt,
+                createTime:
+                    v.CreatedAt.slice(0, 10) + " " + v.CreatedAt.slice(11, 19),
                 creator: v.CreatorId,
                 owner: v.OwnerId,
                 favorite: 0,
@@ -87,6 +115,7 @@ const fetchInfo = async (path, setFolder, setFileList) => {
         });
         setFileList(files);
     } catch (error) {
+        console.log(error);
         message.error(error.response.data.message);
     }
 };
@@ -139,6 +168,8 @@ function FileList(props) {
     const [folderDiaglogvisible, setFolderDiaglogvisible] = useState(false);
 
     const [detailVisable, setDetailVisable] = useState(false);
+    const [previewVisable, setPreviewVisable] = useState(false);
+
     const [folder, setFolder] = useState({
         name: "",
         root: true,
@@ -163,12 +194,24 @@ function FileList(props) {
     const match = useRouteMatch();
 
     const syncFolder = async () =>
-        await fetchInfo(match.params[0], setFolder, setFileList);
+        await fetchInfo(
+            match.params[0],
+            setFolder,
+            setFileList,
+            setCurrentFile,
+            setPreviewVisable
+        );
 
     // Fetch data when loading
     useEffect(() => {
         if (props.user.username !== "") {
-            fetchInfo(match.params[0], setFolder, setFileList);
+            fetchInfo(
+                match.params[0],
+                setFolder,
+                setFileList,
+                setCurrentFile,
+                setPreviewVisable
+            );
         }
     }, [match, props.user]);
 
@@ -347,7 +390,13 @@ function FileList(props) {
                 backIcon={folder.path.length > 0 ? true : false}
                 onBack={() => null}
                 title={folder.root ? "Home" : folder.name}
-                tags={folder.encryption?<Tag color="blue">Encrypted</Tag>:<></>}
+                tags={
+                    folder.encryption ? (
+                        <Tag color="blue">Encrypted</Tag>
+                    ) : (
+                        <></>
+                    )
+                }
             />
 
             <NewFileDialog
@@ -361,6 +410,12 @@ function FileList(props) {
                 setVisible={setFolderDiaglogvisible}
                 path={folder.path}
                 syncFolder={syncFolder}
+            />
+            <PreviewFileDialog
+                visible={previewVisable}
+                setVisible={setPreviewVisable}
+                file={currentFile}
+                folderPath={folder.path}
             />
 
             <DetailDrawser
