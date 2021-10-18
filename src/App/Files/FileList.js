@@ -1,12 +1,4 @@
-import {
-    Layout,
-    Breadcrumb,
-    PageHeader,
-    Tag,
-    Table,
-    Space,
-    Button,
-} from "antd";
+import { Layout, PageHeader, Tag, Table, Space, Button } from "antd";
 import { Modal, message } from "antd";
 import { React, useEffect, useState } from "react";
 import {
@@ -24,7 +16,10 @@ import {
 import NewFileDialog from "./dialogs/NewFileDialog";
 import NewFolderDialog from "./dialogs/NewFolderDialog";
 import PreviewFileDialog from "./dialogs/PreviewFileDialog";
+
+import NavigateBreadcrumb from "./components/NavigateBreadcrumb";
 import RefreshButton from "./components/RefreshButton";
+import DetailDrawser from "./components/DetailDrawer";
 
 import UploadMenu from "./menus/UploadMenu";
 import ManageMenu from "./menus/ManageMenu";
@@ -35,7 +30,6 @@ import "./FileList.scss";
 import { useRouteMatch } from "react-router";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import DetailDrawser from "./components/DetailDrawer";
 
 const { Content } = Layout;
 const { confirm } = Modal;
@@ -370,26 +364,12 @@ function FileList(props) {
 
     return (
         <div id="fileListArea">
-            <Breadcrumb id="navigateBreadcrum">
-                {folder.path !== "/" ? (
-                    <Breadcrumb.Item>
-                        <Link to="/">Home</Link>
-                    </Breadcrumb.Item>
-                ) : (
-                    <></>
-                )}
-                {folder.path
-                    .split("/")
-                    .filter((v) => v.length > 0)
-                    .map((v) => (
-                        <Breadcrumb.Item>{v}</Breadcrumb.Item>
-                    ))}
-            </Breadcrumb>
+            <NavigateBreadcrumb path={folder.path} />
             <PageHeader
                 className="site-layout-background pageTitle"
                 backIcon={folder.path.length > 0 ? true : false}
                 onBack={() => null}
-                title={folder.root ? "Home" : folder.name}
+                title={folder.name}
                 tags={
                     folder.encryption ? (
                         <Tag color="blue">Encrypted</Tag>
