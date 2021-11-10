@@ -4,6 +4,7 @@ import { FolderAddOutlined } from "@ant-design/icons";
 import UploadFile from "../components/UploadFile";
 import ClickDownload from "../components/ClickDownload";
 
+// The dropdown menu for file managing in the control header
 function ManageMenu(props) {
     const menu = (
         <Menu className="fileglobaldropMenu">

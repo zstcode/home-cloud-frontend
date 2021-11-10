@@ -23,6 +23,7 @@ const formTailLayout = {
     },
 };
 
+// Component for login tab
 function LoginPage(props) {
     const history = useHistory();
     const location = useLocation();
@@ -30,6 +31,8 @@ function LoginPage(props) {
     async function LoginHandler(values) {
         let formData = new URLSearchParams();
         formData.append("username", values.username);
+        // Use pre-login to fetch the salt of the account
+        // If the account not exits, it will get a random result
         const preLogin = await axios.post("/api/pre-login", formData);
         const account_salt = preLogin.data["account_salt"];
         const masterKey = await DeriveMasterKey(

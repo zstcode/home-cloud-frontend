@@ -3,6 +3,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useRef } from "react";
 import axios from "axios";
 
+// The menu item for uploading files
 function UploadFile(props) {
     const upload = useRef();
     const handleUpload = async (event) => {

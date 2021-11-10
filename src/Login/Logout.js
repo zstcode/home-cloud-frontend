@@ -6,6 +6,7 @@ import { Route } from "react-router";
 
 import "./Logout.scss";
 
+// Component for logout successfully
 export default function Logout(props) {
     const [success, setSuccess] = useState(false);
 

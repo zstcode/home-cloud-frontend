@@ -12,7 +12,7 @@ import {
     SecurityScanOutlined,
 } from "@ant-design/icons";
 import {
-    NotificationOutlined,
+    CloudUploadOutlined,
     SettingOutlined,
     SearchOutlined,
     LogoutOutlined,
@@ -30,11 +30,13 @@ import axios from "axios";
 const { SubMenu } = Menu;
 const { Header, Sider } = Layout;
 
+// Main component for the app
 const App = () => {
     const history = useHistory();
     const location = useLocation();
     const [user, setUser] = useState({ username: "", status: 0 });
 
+    // Intercept all 401 response and rediret to login page
     axios.interceptors.response.use(
         (res) => res,
         (error) => {
@@ -48,6 +50,7 @@ const App = () => {
     );
 
     useEffect(() => {
+        // Get current login user info
         const fetchUser = async () => {
             try {
                 let res = await axios.get("/api/status/user");
@@ -109,13 +112,7 @@ const App = () => {
                         <Button
                             ghost
                             size="large"
-                            icon={<SearchOutlined />}
-                            className="headerMenuButtom"
-                        ></Button>
-                        <Button
-                            ghost
-                            size="large"
-                            icon={<NotificationOutlined />}
+                            icon={<CloudUploadOutlined />}
                             className="headerMenuButtom"
                         ></Button>
                         <Dropdown
@@ -146,23 +143,33 @@ const App = () => {
                     width="200px"
                     id="sider"
                 >
+                    {/* Default to open all submenu and select item based on the path */}
                     <Menu
                         id="sideMenu"
                         mode="inline"
-                        defaultSelectedKeys={history.location.pathname}
+                        defaultSelectedKeys={
+                            history.location.pathname.split("/").filter((v) => v.length > 0)[0]
+                        }
+                        defaultOpenKeys={["filesSub", "accountSub"]}
                     >
-                        <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
+                        {/* <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
                             Dashboard
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <SubMenu
                             key="filesSub"
                             icon={<FileOutlined />}
                             title="Files"
                         >
-                            <Menu.Item key="/files" icon={<FileOutlined />}>
+                            <Menu.Item key="files" icon={<FileOutlined />}>
                                 <Link to="/files">My Files</Link>
                             </Menu.Item>
-                            <Menu.Item key="/share" icon={<ShareAltOutlined />}>
+                            <Menu.Item key="search" icon={<SearchOutlined />}>
+                                Search
+                            </Menu.Item>
+                            <Menu.Item key="favorites" icon={<StarOutlined />}>
+                                Favorites
+                            </Menu.Item>
+                            <Menu.Item key="share" icon={<ShareAltOutlined />}>
                                 Shared
                             </Menu.Item>
                         </SubMenu>
@@ -172,30 +179,24 @@ const App = () => {
                             title="Account"
                         >
                             <Menu.Item
-                                key="/profile"
+                                key="profile"
                                 icon={<ProfileOutlined />}
                             >
                                 <Link to="/profile">Profile</Link>
                             </Menu.Item>
                             <Menu.Item
-                                key="/security"
+                                key="security"
                                 icon={<SecurityScanOutlined />}
                             >
                                 Security
                             </Menu.Item>
                             <Menu.Item
-                                key="/settings"
+                                key="settings"
                                 icon={<SettingOutlined />}
                             >
                                 Settings
                             </Menu.Item>
                         </SubMenu>
-                        <Menu.Item key="/favorites" icon={<StarOutlined />}>
-                            Favorites
-                        </Menu.Item>
-                        <Menu.Item key="/tags" icon={<TagOutlined />}>
-                            Tags
-                        </Menu.Item>
                     </Menu>
                 </Sider>
 
@@ -208,6 +209,7 @@ const App = () => {
                             path="/files/(.*)"
                             render={() => <FileList user={user} />}
                         />
+                        {/* Redirect to add the root slash to the path */}
                         <Route
                             exact
                             path="/files"

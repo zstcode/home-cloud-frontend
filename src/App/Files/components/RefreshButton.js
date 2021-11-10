@@ -2,6 +2,7 @@ import { Button } from "antd";
 import { SyncOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
+// The refresh button in the control header
 function RefreshButton(props) {
     const [refreshSpin, setRefreshSpin] = useState(false);
     return (

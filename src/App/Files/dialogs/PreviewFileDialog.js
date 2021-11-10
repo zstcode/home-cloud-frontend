@@ -1,6 +1,7 @@
 import { Modal } from "antd";
 import { useHistory } from "react-router";
 
+// The dialog component for peviewing files
 function PreviewFileDialog(props) {
     const history = useHistory();
     const handleClose = () => {

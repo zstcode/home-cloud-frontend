@@ -4,6 +4,7 @@ import { useRef } from "react";
 
 const { Option } = Select;
 
+// handleSubmit: Handler for create a new file in the folder
 const handleSubmit = async (values, path, setVisible, syncFolder) => {
     let formData = new URLSearchParams();
     formData.append("dir", path);
@@ -33,6 +34,7 @@ const handleSubmit = async (values, path, setVisible, syncFolder) => {
     await syncFolder();
 };
 
+// The new file dialog component
 function NewFileDialog(props) {
     const form = useRef();
     const onTypeChange = (value) => {

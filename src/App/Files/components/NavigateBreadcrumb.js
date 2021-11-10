@@ -1,6 +1,7 @@
 import { Breadcrumb } from "antd";
 import { Link } from "react-router-dom";
 
+// The breadcrumb in the header to show the current path
 function NavigateBreadcrumb(props) {
     let items = [];
     if (props.path !== "/") {

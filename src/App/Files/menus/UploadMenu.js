@@ -3,6 +3,7 @@ import { FileAddOutlined } from "@ant-design/icons";
 import { FolderAddOutlined } from "@ant-design/icons";
 import UploadFile from "../components/UploadFile";
 
+// The dropdown menu for file uploading and creating
 function UploadMenu(props) {
     const menu = (
         <Menu className="fileglobaldropMenu">

@@ -26,6 +26,7 @@ const formTailLayout = {
     },
 };
 
+// Component for sign up tab
 function SignUp(props) {
     const history = useHistory();
 

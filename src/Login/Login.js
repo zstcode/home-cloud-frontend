@@ -7,6 +7,7 @@ import "./Login.scss";
 
 const { TabPane } = Tabs;
 
+// Component for login and sign up
 function Login(props) {
     const location = useLocation();
 

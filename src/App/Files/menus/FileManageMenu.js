@@ -1,5 +1,6 @@
 import { Menu, Dropdown, Button } from "antd";
 
+// The dropdown menu for file managing in the file list
 function FileManageMenu(props) {
     const menu = (
         <Menu className="filedropMenu">
@@ -30,13 +31,6 @@ function FileManageMenu(props) {
                 onClick={props.callback.move}
             >
                 Move
-            </Menu.Item>
-            <Menu.Item
-                key="favorite"
-                className="filedropMenuItem"
-                onClick={props.callback.favorite}
-            >
-                Favorite
             </Menu.Item>
         </Menu>
     );

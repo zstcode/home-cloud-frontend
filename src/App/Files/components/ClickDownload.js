@@ -1,6 +1,7 @@
 import { Menu, message } from "antd";
 import { useRef } from "react";
 
+// Download component in dropdown menu
 function ClickDownload(props) {
     const form = useRef();
     return (

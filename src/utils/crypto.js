@@ -2,6 +2,7 @@ import { pbkdf2Sync } from "pbkdf2";
 import { Buffer } from "safe-buffer";
 import hkdf from "futoin-hkdf";
 
+// DeriveMasterKey: derive a master key from user password using PBKDF2. Use WebCrypto API if available.
 async function DeriveMasterKey(password, salt, len) {
     const enc = new TextEncoder();
     if (window.isSecureContext) {
@@ -28,6 +29,7 @@ async function DeriveMasterKey(password, salt, len) {
     }
 }
 
+// DeriveAuthKey: Derive Auth key for authentication from the master key. Use WebCrypto API if available
 async function DeriveAuthKey(masterKey, len) {
     if (window.isSecureContext) {
         const keyMaterial = await crypto.subtle.importKey(
@@ -55,6 +57,7 @@ async function DeriveAuthKey(masterKey, len) {
     }).toString("hex");
 }
 
+// GenerateSalt: Generate a random salt for sign up
 async function GenerateSalt(len) {
     len = len / 4;
     const n = new Uint8Array(len);

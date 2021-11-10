@@ -34,6 +34,7 @@ import { Link } from "react-router-dom";
 const { Content } = Layout;
 const { confirm } = Modal;
 
+// fetchInfo: Get the current folder infomation based on the matched URL path
 const fetchInfo = async (
     path,
     setFolder,
@@ -51,6 +52,8 @@ const fetchInfo = async (
         let formData = new URLSearchParams();
         formData.append("dir", folderPath);
         const pathData = await axios.post("/api/file/get_info", formData);
+        // If it is a file, will set the current folder as its parent and open the preview dialog
+        // The backend will return the parent folder info if it is a file
         if (pathData.data.type === "folder") {
             setFolder({
                 name: pathData.data.info.Name,
@@ -114,6 +117,7 @@ const fetchInfo = async (
     }
 };
 
+// handleDelete: Delete file based what the paths
 const handleDelete = (paths, syncFolder, setSelectedRows) => {
     const title =
         paths.length === 1

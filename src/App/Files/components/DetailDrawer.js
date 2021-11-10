@@ -1,5 +1,6 @@
 import { Drawer, List } from "antd";
 
+// File details drawer
 function DetailDrawser(props) {
     const data = [
         `File Name: ${props.file.name}`,

@@ -47,6 +47,7 @@ const tailFormItemLayout = {
     },
 };
 
+// Component for user profile settings
 function Profile(props) {
     const [form] = Form.useForm();
 
