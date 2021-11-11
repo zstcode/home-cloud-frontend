@@ -1,11 +1,37 @@
-import { Menu, Dropdown, Button } from "antd";
-import { FileAddOutlined } from "@ant-design/icons";
-import { FolderAddOutlined } from "@ant-design/icons";
-import UploadFile from "../components/UploadFile";
-import ClickDownload from "../components/ClickDownload";
+import { Menu, Dropdown, Button, message } from "antd";
+import { FileAddOutlined, FolderAddOutlined, UploadOutlined } from "@ant-design/icons";
+import { useRef } from "react";
+import axios from "axios";
 
 // The dropdown menu for file managing in the control header
 function ManageMenu(props) {
+    const downloadForm = useRef();
+    const upload = useRef();
+    const handleUpload = async (event) => {
+        event.preventDefault();
+        [...upload.current.files].forEach(async (file) => {
+            let formData = new FormData();
+            formData.append("dir", props.path);
+            formData.append("file", file);
+            try {
+                let res = await axios.post("/api/file/upload", formData);
+                if (res.data.success !== 0) {
+                    message.error(res.data.message);
+                } else {
+                    if (res.data.files[file.name].result) {
+                        message.info(`Upload ${file.name} success`);
+                    } else {
+                        message.error(`Upload ${file.name} error`);
+                    }
+                }
+            } catch (error) {
+                message.error(error.response.data.message);
+            }
+        });
+        upload.current.value = "";
+        await props.callback.upload();
+    };
+
     const menu = (
         <Menu className="fileglobaldropMenu">
             <Menu.Item
@@ -24,11 +50,22 @@ function ManageMenu(props) {
             >
                 New Folder
             </Menu.Item>
-            <UploadFile
-                path={props.path}
-                classname="filedropMenuItem showinMobile"
-                callback={props.callback.upload}
-            />
+            <Menu.Item
+                key="uploadfile"
+                icon={<UploadOutlined />}
+                onClick={() => upload.current.click()}
+                className="filedropMenuItem showinMobile"
+            >
+                <input
+                    type="file"
+                    name="file"
+                    onChange={handleUpload}
+                    style={{ display: "none" }}
+                    ref={upload}
+                    multiple
+                />
+                Upload File
+            </Menu.Item>
             <Menu.Item
                 key="rename"
                 className="filedropMenuItem showinMobile"
@@ -39,7 +76,7 @@ function ManageMenu(props) {
             <Menu.Item
                 key="delete"
                 className="filedropMenuItem"
-                onClick={()=>props.callback.delete(props.paths)}
+                onClick={() => props.callback.delete(props.paths)}
             >
                 Delete
             </Menu.Item>
@@ -57,11 +94,37 @@ function ManageMenu(props) {
             >
                 Move
             </Menu.Item>
-            <ClickDownload downloadList={props.paths} />
+            <Menu.Item
+                key="download"
+                className="filedropMenuItem"
+                onClick={() => {
+                    if (props.paths.length === 1) {
+                        downloadForm.current.submit();
+                    } else if (props.paths.length > 1) {
+                        message.error("Only one selection for download allowed! ");
+                    } else {
+                        message.error("No selection found! ");
+                    }
+                }}
+            >
+                <form method="post" action="/api/file/get_file" ref={downloadForm}>
+                    <input
+                        name="dir"
+                        value={
+                            props.paths.length === 1
+                                ? props.paths[0]
+                                : ""
+                        }
+                        hidden
+                        readOnly
+                    />
+                    Download
+                </form>
+            </Menu.Item>
             <Menu.Item
                 key="favorite"
                 className="filedropMenuItem"
-                onClick={props.callback.favorite}
+                onClick={() => props.callback.favorite(props.paths)}
             >
                 Favorite
             </Menu.Item>

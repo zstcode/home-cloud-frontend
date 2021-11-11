@@ -1,4 +1,4 @@
-import { Layout, PageHeader, Tag, Table, Space, Button } from "antd";
+import { Layout, PageHeader, Tag, Table, Space, Button, Tooltip } from "antd";
 import { Modal, message } from "antd";
 import { React, useEffect, useState } from "react";
 import {
@@ -86,7 +86,7 @@ const fetchInfo = async (
                 creator: pathData.data.info.CreatorId,
                 owner: pathData.data.info.OwnerId,
                 shared: false,
-                favorite: false,
+                favorite: pathData.data.info.Favorite,
             });
             setPreviewVisable(true);
         }
@@ -106,7 +106,7 @@ const fetchInfo = async (
                     v.CreatedAt.slice(0, 10) + " " + v.CreatedAt.slice(11, 19),
                 creator: v.CreatorId,
                 owner: v.OwnerId,
-                favorite: 0,
+                favorite: v.Favorite,
                 position: v.Position,
             };
         });
@@ -161,6 +161,36 @@ const handleDelete = (paths, syncFolder, setSelectedRows) => {
     });
 };
 
+// Toggle Favorite settings
+const handleFavorite = (paths, syncFolder, setSelectedRows) => {
+    const toogleFavortite = async (paths) => {
+        await Promise.all(
+            paths.map(async (v) => {
+                let formData = new URLSearchParams();
+                formData.append("dir", v);
+                try {
+                    const res = await axios.put(
+                        "/api/file/favorite",
+                        formData
+                    );
+                    if (res.data.success !== 0) {
+                        message.error(
+                            `Change Favorite for ${v} error: ${res.data.message}! `
+                        );
+                    }
+                } catch (error) {
+                    message.error(
+                        `Change Favorite for ${v} error: ${error.response.data.message}! `
+                    );
+                }
+            })
+        )
+        setSelectedRows([]);
+        syncFolder();
+    }
+    toogleFavortite(paths);
+}
+
 function FileList(props) {
     const [fileDiaglogvisible, setFileDiaglogvisible] = useState(false);
     const [folderDiaglogvisible, setFolderDiaglogvisible] = useState(false);
@@ -185,7 +215,7 @@ function FileList(props) {
         creator: "",
         owner: "",
         shared: false,
-        favorite: false,
+        favorite: 0,
     });
     const [selectedRows, setSelectedRows] = useState([]);
 
@@ -202,6 +232,7 @@ function FileList(props) {
 
     // Fetch data when loading
     useEffect(() => {
+        // After fetching the user information, fetch the current folder info
         if (props.user.username !== "") {
             fetchInfo(
                 match.params[0],
@@ -217,6 +248,9 @@ function FileList(props) {
         {
             title: "File Name",
             key: "name",
+            ellipsis: {
+                showTitle: false,
+            },
             render: (record) => {
                 let icon;
                 if (record.dir === 1) {
@@ -243,11 +277,13 @@ function FileList(props) {
                     }
                 }
                 return (
-                    <Link to={"/files" + record.position}>
-                        <Button type="link" icon={icon} size="small">
-                            {record.name}
-                        </Button>
-                    </Link>
+                    <Tooltip placement="topLeft" title={record.name}>
+                        <Link to={"/files" + record.position}>
+                            <Button type="link" icon={icon} size="small">
+                                {record.name}
+                            </Button>
+                        </Link>
+                    </Tooltip>
                 );
             },
             sorter: (a, b) => {
@@ -265,9 +301,9 @@ function FileList(props) {
             responsive: ["md"],
         },
         {
-            title: "Favorite",
+            title: "",
             key: "favorite",
-            width: "6vw",
+            width: "3vw",
             responsive: ["sm"],
             render: (record) =>
                 record.favorite === 0 ? (
@@ -293,17 +329,6 @@ function FileList(props) {
             responsive: ["sm"],
             render: (record) => (
                 <Space size="middle">
-                    <form method="post" action="/api/file/get_file">
-                        <input
-                            name="dir"
-                            value={record.position}
-                            hidden
-                            readOnly
-                        />
-                        <Button type="link" size="small" htmlType="submit">
-                            Download
-                        </Button>
-                    </form>
                     <FileManageMenu
                         callback={fileManegeCallback}
                         path={record.position}
@@ -322,13 +347,26 @@ function FileList(props) {
                                 creator: record.creator,
                                 owner: record.owner,
                                 shared: false,
-                                favorite: false,
+                                favorite: record.favorite,
                             });
                             setDetailVisable(true);
                         }}
                     >
                         Details
                     </Button>
+                    {record.dir === 0 ?
+                        <form method="post" action="/api/file/get_file">
+                            <input
+                                name="dir"
+                                value={record.position}
+                                hidden
+                                readOnly
+                            />
+                            <Button type="link" size="small" htmlType="submit">
+                                Download
+                            </Button>
+                        </form>
+                        : <></>}
                 </Space>
             ),
         },
@@ -336,16 +374,27 @@ function FileList(props) {
             title: "Action",
             key: "action",
             responsive: ["xs"],
-            render: () => (
-                <Space size="middle">
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => setDetailVisable(true)}
-                    >
-                        Details
-                    </Button>
-                </Space>
+            render: (record) => (
+                <Button
+                    type="link"
+                    size="small"
+                    onClick={() => {
+                        setCurrentFile({
+                            name: record.name,
+                            position: record.position,
+                            size: record.size,
+                            type: record.type,
+                            createTime: record.createTime,
+                            updateTime: record.updateTime,
+                            creator: record.creator,
+                            owner: record.owner,
+                            shared: false,
+                            favorite: record.favorite,
+                        });
+                        setDetailVisable(true);
+                    }}                >
+                    Details
+                </Button>
             ),
         },
     ];
@@ -363,7 +412,7 @@ function FileList(props) {
         delete: (paths) => handleDelete(paths, syncFolder, setSelectedRows),
         copy: () => message.error("Copy is not supported now! "),
         move: () => message.error("Move is not supported now! "),
-        favorite: () => message.error("Favorite is not supported now!"),
+        favorite: (paths) => handleFavorite(paths, syncFolder, setSelectedRows),
     };
 
     return (
@@ -424,6 +473,7 @@ function FileList(props) {
                             paths={selectedRows.map(
                                 (v) => fileList[v].position
                             )}
+                            path={folder.path}
                         />
                         <RefreshButton syncFolder={syncFolder} />
                         <SettingMenu callback={settingsMenuCallBack} />

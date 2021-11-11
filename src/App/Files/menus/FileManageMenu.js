@@ -32,6 +32,13 @@ function FileManageMenu(props) {
             >
                 Move
             </Menu.Item>
+            <Menu.Item
+                key="favorite"
+                className="filedropMenuItem"
+                onClick={() => props.callback.favorite([props.path])}
+            >
+                Favorite
+            </Menu.Item>
         </Menu>
     );
     return (
