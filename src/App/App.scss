@@ -136,3 +136,15 @@
         }
     }
 }
+
+#progressMenu {
+    width: 400px;
+    overflow-x: hidden;
+    @media screen and (max-width: 991px) {
+        width: 240px;
+    }
+    .progressName {
+        margin-left: 15px;
+        font-size: 12pt;
+    }
+}

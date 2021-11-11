@@ -1,21 +1,57 @@
 import { message, Modal } from "antd";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
 const { confirm } = Modal;
 
-const UploadHandler = async (files, path, callback) => {
+const UploadHandler = async (files, path, callback, setTransferList) => {
     for (const file of files) {
         let formData = new FormData();
         formData.append("dir", path);
         formData.append("file", file);
         try {
-            let res = await axios.post("/api/file/upload", formData);
+            const id = uuidv4();
+            setTransferList((prev) => {
+                return [{ id: id, name: file.name, progress: 0, status: 0 }, ...prev]
+            })
+            let res = await axios.post("/api/file/upload", formData, {
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.lengthComputable) {
+                        const percentCompleted = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
+                        setTransferList((prev) => {
+                            let newlist = [...prev];
+                            let uploadprogress = newlist.find((v) => v.id === id);
+                            uploadprogress.progress = percentCompleted;
+                            return newlist;
+                        })
+                    }
+                }
+            });
             if (res.data.success !== 0) {
+                setTransferList((prev) => {
+                    let newlist = [...prev];
+                    let uploadprogress = newlist.find((v) => v.id === id);
+                    uploadprogress.status = 2;
+                    return newlist;
+                })
                 message.error(res.data.message);
             } else {
                 if (res.data.files[file.name].result) {
+                    setTransferList((prev) => {
+                        let newlist = [...prev];
+                        let uploadprogress = newlist.find((v) => v.id === id);
+                        uploadprogress.progress = 100;
+                        uploadprogress.status = 1;
+                        return newlist;
+                    })
                     message.info(`Upload ${file.name} success`);
                 } else {
+                    setTransferList((prev) => {
+                        let newlist = [...prev];
+                        let uploadprogress = newlist.find((v) => v.id === id);
+                        uploadprogress.status = 2;
+                        return newlist;
+                    })
                     message.error(`Upload ${file.name} error`);
                 }
             }

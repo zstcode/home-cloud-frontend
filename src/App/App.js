@@ -7,20 +7,19 @@ import {
 } from "@ant-design/icons";
 import {
     FileOutlined,
-    TagOutlined,
     ProfileOutlined,
-    SecurityScanOutlined,
 } from "@ant-design/icons";
 import {
     CloudUploadOutlined,
     SettingOutlined,
     SearchOutlined,
-    LogoutOutlined,
 } from "@ant-design/icons";
 import { Switch, Route, Link } from "react-router-dom";
 import { Redirect, useHistory, useLocation } from "react-router";
 import FileList from "./Files/FileList";
 import Profile from "./Settings/Profile";
+import profileMenu from "./menus/ProfileMenu";
+import transerListMenu from "./menus/TransferListMenu";
 
 import { useState, useEffect } from "react";
 
@@ -34,7 +33,16 @@ const { Header, Sider } = Layout;
 const App = () => {
     const history = useHistory();
     const location = useLocation();
-    const [user, setUser] = useState({ username: "", status: 0 });
+    const [user, setUser] = useState({
+        username: "",
+        status: 0, email: "",
+        nickname: "",
+        gender: 0,
+        bio: "",
+        avartar: "",
+    });
+    const [transferList, setTransferList] = useState([]);
+    const [transferListVisible, setTransferListVisible] = useState(false)
 
     // Intercept all 401 response and rediret to login page
     axios.interceptors.response.use(
@@ -69,36 +77,17 @@ const App = () => {
         fetchUser();
     }, []);
 
-    const profileMenu = (
-        <Menu id="profileMenu" theme="dark">
-            <Menu.Item id="profileUsername" key="username" disabled>
-                {user.username}
-            </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item
-                key="profile"
-                icon={<ProfileOutlined />}
-                className="profileMenuItem"
-            >
-                <Link to="/profile">Profile</Link>
-            </Menu.Item>
-            <Menu.Item
-                key="settings"
-                icon={<SettingOutlined />}
-                className="profileMenuItem"
-            >
-                Settings
-            </Menu.Item>
-            <Menu.Item
-                key="Logout"
-                icon={<LogoutOutlined />}
-                className="profileMenuItem"
-                onClick={() => history.push("/logout")}
-            >
-                Logout
-            </Menu.Item>
-        </Menu>
-    );
+    useEffect(() => {
+        if (transferList.filter((v) => v.status === 0).length > 0) {
+            const preventRefresh = (e) => {
+                e.preventDefault();
+                e.returnValue = "";
+                return "";
+            }
+            window.addEventListener("beforeunload", preventRefresh, false);
+            return () => window.removeEventListener("beforeunload", preventRefresh, false);
+        }
+    }, [transferList])
 
     return (
         <Layout id="rootLayout">
@@ -109,14 +98,26 @@ const App = () => {
                 </div>
                 <div className="headerMenuContainer">
                     <div className="headerMenu">
-                        <Button
-                            ghost
-                            size="large"
-                            icon={<CloudUploadOutlined />}
-                            className="headerMenuButtom"
-                        ></Button>
+                        {transferList.length > 0 ?
+                            <Dropdown
+                                overlay={transerListMenu(transferList)}
+                                placement="bottomRight"
+                                trigger={["click"]}
+                                visible={transferListVisible}
+                                onVisibleChange={(v) => setTransferListVisible(v)}
+                            >
+                                <Button
+                                    ghost
+                                    size="large"
+                                    icon={<CloudUploadOutlined />}
+                                    className="headerMenuButtom"
+                                    style={{ marginRight: "10px", cursor: "pointer" }}
+                                ></Button>
+                            </Dropdown>
+                            : <></>}
+
                         <Dropdown
-                            overlay={profileMenu}
+                            overlay={profileMenu(user.username, history)}
                             placement="bottomLeft"
                             trigger={["click"]}
                         >
@@ -185,12 +186,6 @@ const App = () => {
                                 <Link to="/profile">Profile</Link>
                             </Menu.Item>
                             <Menu.Item
-                                key="security"
-                                icon={<SecurityScanOutlined />}
-                            >
-                                Security
-                            </Menu.Item>
-                            <Menu.Item
                                 key="settings"
                                 icon={<SettingOutlined />}
                             >
@@ -207,7 +202,12 @@ const App = () => {
                     <Switch>
                         <Route
                             path="/files/(.*)"
-                            render={() => <FileList user={user} />}
+                            render={() =>
+                                <FileList
+                                    user={user}
+                                    setTransferList={setTransferList}
+                                    setTransferListVisible={setTransferListVisible}
+                                />}
                         />
                         {/* Redirect to add the root slash to the path */}
                         <Route

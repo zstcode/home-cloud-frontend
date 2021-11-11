@@ -217,6 +217,7 @@ function FileList(props) {
         {
             title: "Action",
             key: "action",
+            width: 90,
             responsive: ["xs"],
             render: (record) => (
                 <Button
@@ -307,6 +308,9 @@ function FileList(props) {
                         <UploadMenu
                             path={folder.path}
                             callback={uploadMenuCallBack}
+                            transferList={props.transferList}
+                            setTransferList={props.setTransferList}
+                            setTransferListVisible={props.setTransferListVisible}
                         />
                         <ManageMenu
                             callback={{
@@ -318,6 +322,8 @@ function FileList(props) {
                                 (v) => fileList[v].position
                             )}
                             path={folder.path}
+                            setTransferList={props.setTransferList}
+                            setTransferListVisible={props.setTransferListVisible}
                         />
                         <RefreshButton syncFolder={syncFolder} />
                         <SettingMenu callback={settingsMenuCallBack} />

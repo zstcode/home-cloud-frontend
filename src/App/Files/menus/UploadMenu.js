@@ -1,4 +1,4 @@
-import { Menu, Dropdown, Button, message } from "antd";
+import { Menu, Dropdown, Button } from "antd";
 import { FileAddOutlined, FolderAddOutlined, UploadOutlined } from "@ant-design/icons";
 import { useRef } from "react";
 import { UploadHandler } from "../utils/FileHanlder";
@@ -8,7 +8,13 @@ function UploadMenu(props) {
     const upload = useRef();
     const handleUpload = async (event) => {
         event.preventDefault();
-        await UploadHandler([...upload.current.files], props.path, props.callback.upload);
+        props.setTransferListVisible(true);
+        await UploadHandler(
+            [...upload.current.files],
+            props.path,
+            props.callback.upload,
+            props.setTransferList
+        );
         upload.current.value = "";
     };
 

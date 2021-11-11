@@ -1,6 +1,6 @@
 import { Layout, PageHeader, Avatar, Upload, message } from "antd";
 import React from "react";
-import { Form, Input, Select, Button, Radio } from "antd";
+import { Form, Input, Select, Button } from "antd";
 import "./Profile.scss";
 
 const { Option } = Select;
@@ -86,7 +86,7 @@ function Profile(props) {
                     >
                         <Form.Item
                             name="username"
-                            label="username"
+                            label="Username"
                             rules={[
                                 {
                                     required: true,
@@ -146,17 +146,6 @@ function Profile(props) {
 
                         <Form.Item name="Bio" label="Bio">
                             <TextArea />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="Privacy"
-                            label="Account Privacy"
-                            initialValue={0}
-                        >
-                            <Radio.Group>
-                                <Radio value={0}>Private</Radio>
-                                <Radio value={1}>Public</Radio>
-                            </Radio.Group>
                         </Form.Item>
 
                         <Form.Item {...tailFormItemLayout}>

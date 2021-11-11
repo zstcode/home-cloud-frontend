@@ -9,7 +9,13 @@ function ManageMenu(props) {
     const upload = useRef();
     const handleUpload = async (event) => {
         event.preventDefault();
-        await UploadHandler([...upload.current.files], props.path, props.callback.upload);
+        props.setTransferListVisible(true);
+        await UploadHandler(
+            [...upload.current.files],
+            props.path,
+            props.callback.upload,
+            props.setTransferList
+        );
         upload.current.value = "";
     };
 
