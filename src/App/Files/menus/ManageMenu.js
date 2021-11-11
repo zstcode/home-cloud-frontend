@@ -1,7 +1,7 @@
 import { Menu, Dropdown, Button, message } from "antd";
 import { FileAddOutlined, FolderAddOutlined, UploadOutlined } from "@ant-design/icons";
 import { useRef } from "react";
-import axios from "axios";
+import { UploadHandler } from "../utils/FileHanlder";
 
 // The dropdown menu for file managing in the control header
 function ManageMenu(props) {
@@ -9,27 +9,8 @@ function ManageMenu(props) {
     const upload = useRef();
     const handleUpload = async (event) => {
         event.preventDefault();
-        [...upload.current.files].forEach(async (file) => {
-            let formData = new FormData();
-            formData.append("dir", props.path);
-            formData.append("file", file);
-            try {
-                let res = await axios.post("/api/file/upload", formData);
-                if (res.data.success !== 0) {
-                    message.error(res.data.message);
-                } else {
-                    if (res.data.files[file.name].result) {
-                        message.info(`Upload ${file.name} success`);
-                    } else {
-                        message.error(`Upload ${file.name} error`);
-                    }
-                }
-            } catch (error) {
-                message.error(error.response.data.message);
-            }
-        });
+        await UploadHandler([...upload.current.files], props.path, props.callback.upload);
         upload.current.value = "";
-        await props.callback.upload();
     };
 
     const menu = (
