@@ -76,17 +76,14 @@ function FileList(props) {
 
     // Fetch data when loading
     useEffect(() => {
-        // After fetching the user information, fetch the current folder info
-        if (props.user.username !== "") {
-            FetchInfo(
-                match.params[0],
-                setFolder,
-                setFileList,
-                setCurrentFile,
-                setPreviewVisable
-            );
-        }
-    }, [match, props.user]);
+        FetchInfo(
+            match.params[0],
+            setFolder,
+            setFileList,
+            setCurrentFile,
+            setPreviewVisable
+        );
+    }, [match]);
 
     // Columns of the FileList table
     const columns = [

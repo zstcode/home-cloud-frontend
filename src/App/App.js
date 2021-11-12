@@ -1,4 +1,4 @@
-import { Layout, Menu, Avatar, Button, Dropdown, message } from "antd";
+import { Layout, Menu, Avatar, Button, Dropdown, message, Spin } from "antd";
 import {
     UserOutlined,
     StarOutlined,
@@ -92,140 +92,150 @@ const App = () => {
         }
     }, [transferList])
 
-    return (
-        <Layout id="rootLayout">
-            <Header className="header">
-                <div className="logo">
-                    <img src="/logo.png" alt="logo" id="logosvg" />
-                    <span id="logotext">Home Cloud System</span>
-                </div>
-                <div className="headerMenuContainer">
-                    <div className="headerMenu">
-                        {transferList.length > 0 ?
+    if (!user.username) {
+        return (
+            <Spin
+                id="loading"
+                size="large"
+                tip="Loading"
+            />
+        )
+    } else {
+        return (
+            <Layout id="rootLayout">
+                <Header className="header">
+                    <div className="logo">
+                        <img src="/logo.png" alt="logo" id="logosvg" />
+                        <span id="logotext">Home Cloud System</span>
+                    </div>
+                    <div className="headerMenuContainer">
+                        <div className="headerMenu">
+                            {transferList.length > 0 ?
+                                <Dropdown
+                                    overlay={transerListMenu(transferList)}
+                                    placement="bottomRight"
+                                    trigger={["click"]}
+                                    visible={transferListVisible}
+                                    onVisibleChange={(v) => setTransferListVisible(v)}
+                                >
+                                    <Button
+                                        ghost
+                                        size="large"
+                                        icon={<CloudUploadOutlined />}
+                                        className="headerMenuButtom"
+                                        style={{ marginRight: "10px", cursor: "pointer" }}
+                                    ></Button>
+                                </Dropdown>
+                                : <></>}
+
                             <Dropdown
-                                overlay={transerListMenu(transferList)}
-                                placement="bottomRight"
+                                overlay={profileMenu(user.username, history)}
+                                placement="bottomLeft"
                                 trigger={["click"]}
-                                visible={transferListVisible}
-                                onVisibleChange={(v) => setTransferListVisible(v)}
                             >
                                 <Button
                                     ghost
                                     size="large"
-                                    icon={<CloudUploadOutlined />}
-                                    className="headerMenuButtom"
-                                    style={{ marginRight: "10px", cursor: "pointer" }}
+                                    icon={user.avartar ?
+                                        <Avatar
+                                            id="avatar"
+                                            src={user.avartar}
+                                        /> :
+                                        <Avatar id="avatar"
+                                            style={{ backgroundColor: "#00a2ae" }}
+                                        >
+                                            {user.username.slice(0, 2)}
+                                        </Avatar>
+                                    }
+                                    className="avatarButtom"
                                 ></Button>
                             </Dropdown>
-                            : <></>}
-
-                        <Dropdown
-                            overlay={profileMenu(user.username, history)}
-                            placement="bottomLeft"
-                            trigger={["click"]}
-                        >
-                            <Button
-                                ghost
-                                size="large"
-                                icon={user.avartar ?
-                                    <Avatar
-                                        id="avatar"
-                                        src={user.avartar}
-                                    /> :
-                                    <Avatar id="avatar"
-                                        style={{ backgroundColor: "#00a2ae" }}
-                                    >
-                                        {user.username.slice(0, 2)}
-                                    </Avatar>
-                                }
-                                className="avatarButtom"
-                            ></Button>
-                        </Dropdown>
+                        </div>
                     </div>
-                </div>
-            </Header>
-            <Layout>
-                <Sider
-                    className="site-layout-background"
-                    breakpoint="lg"
-                    collapsedWidth={0}
-                    width="200px"
-                    id="sider"
-                >
-                    {/* Default to open all submenu and select item based on the path */}
-                    <Menu
-                        id="sideMenu"
-                        mode="inline"
-                        defaultSelectedKeys={
-                            history.location.pathname.split("/").filter((v) => v.length > 0)[0]
-                        }
-                        defaultOpenKeys={["filesSub", "accountSub"]}
+                </Header>
+                <Layout>
+                    <Sider
+                        className="site-layout-background"
+                        breakpoint="lg"
+                        collapsedWidth={0}
+                        width="200px"
+                        id="sider"
                     >
-                        <SubMenu
-                            key="filesSub"
-                            icon={<FileOutlined />}
-                            title="Files"
+                        {/* Default to open all submenu and select item based on the path */}
+                        <Menu
+                            id="sideMenu"
+                            mode="inline"
+                            defaultSelectedKeys={
+                                history.location.pathname.split("/").filter((v) => v.length > 0)[0]
+                            }
+                            defaultOpenKeys={["filesSub", "accountSub"]}
                         >
-                            <Menu.Item key="files" icon={<FileOutlined />}>
-                                <Link to="/files">My Files</Link>
-                            </Menu.Item>
-                            <Menu.Item key="search" icon={<SearchOutlined />}>
-                                Search
-                            </Menu.Item>
-                            <Menu.Item key="favorites" icon={<StarOutlined />}>
-                                Favorites
-                            </Menu.Item>
-                        </SubMenu>
-                        <SubMenu
-                            key="accountSub"
-                            icon={<UserOutlined />}
-                            title="Account"
-                        >
-                            <Menu.Item
-                                key="profile"
-                                icon={<ProfileOutlined />}
+                            <SubMenu
+                                key="filesSub"
+                                icon={<FileOutlined />}
+                                title="Files"
                             >
-                                <Link to="/profile">Profile</Link>
-                            </Menu.Item>
-                            <Menu.Item
-                                key="settings"
-                                icon={<SettingOutlined />}
+                                <Menu.Item key="files" icon={<FileOutlined />}>
+                                    <Link to="/files">My Files</Link>
+                                </Menu.Item>
+                                <Menu.Item key="search" icon={<SearchOutlined />}>
+                                    Search
+                                </Menu.Item>
+                                <Menu.Item key="favorites" icon={<StarOutlined />}>
+                                    Favorites
+                                </Menu.Item>
+                            </SubMenu>
+                            <SubMenu
+                                key="accountSub"
+                                icon={<UserOutlined />}
+                                title="Account"
                             >
-                                Settings
-                            </Menu.Item>
-                        </SubMenu>
-                    </Menu>
-                </Sider>
+                                <Menu.Item
+                                    key="profile"
+                                    icon={<ProfileOutlined />}
+                                >
+                                    <Link to="/profile">Profile</Link>
+                                </Menu.Item>
+                                <Menu.Item
+                                    key="settings"
+                                    icon={<SettingOutlined />}
+                                >
+                                    Settings
+                                </Menu.Item>
+                            </SubMenu>
+                        </Menu>
+                    </Sider>
 
-                <Layout
-                    id="contentLayoutArea"
-                    className="site-layout-background"
-                >
-                    <Switch>
-                        <Route
-                            path="/files/(.*)"
-                            render={() =>
-                                <FileList
+                    <Layout
+                        id="contentLayoutArea"
+                        className="site-layout-background"
+                    >
+                        <Switch>
+                            <Route
+                                path="/files/(.*)"
+                                render={() =>
+                                    <FileList
+                                        user={user}
+                                        setTransferList={setTransferList}
+                                        setTransferListVisible={setTransferListVisible}
+                                    />}
+                            />
+                            {/* Redirect to add the root slash to the path */}
+                            <Route
+                                exact
+                                path="/files"
+                                component={() => <Redirect to="/files/" />}
+                            />
+                            <Route path="/profile" render={() =>
+                                <Profile
                                     user={user}
-                                    setTransferList={setTransferList}
-                                    setTransferListVisible={setTransferListVisible}
-                                />}
-                        />
-                        {/* Redirect to add the root slash to the path */}
-                        <Route
-                            exact
-                            path="/files"
-                            component={() => <Redirect to="/files/" />}
-                        />
-                        <Route path="/profile" render={() =>
-                            <Profile
-                                user={user}
-                                setReload={setReload} />} />
-                    </Switch>
+                                    setReload={setReload} />} />
+                        </Switch>
+                    </Layout>
                 </Layout>
             </Layout>
-        </Layout>
-    );
+        );
+    }
 };
 
 export default App;

@@ -99,6 +99,7 @@ function Profile(props) {
                         <Form.Item
                             name="username"
                             label="Username"
+                            initialValue={props.user.username}
                             rules={[
                                 {
                                     required: true,
