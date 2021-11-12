@@ -1,7 +1,8 @@
-import { Layout, PageHeader, Avatar } from "antd";
+import { Layout, PageHeader, Avatar, message } from "antd";
 import React, { useRef } from "react";
 import { Form, Input, Select, Button } from "antd";
 import avatarUploadHandler from "./utils/avatarUpload";
+import axios from "axios";
 import "./Profile.scss";
 
 const { Option } = Select;
@@ -50,8 +51,34 @@ function Profile(props) {
         avatartUploader.current.value = "";
     }
 
-    const onFinish = (values) => {
-        console.log("Received values of form: ", values);
+    const submitProfile = async (values) => {
+        let formData = new URLSearchParams();
+        if (values.username !== props.user.username) {
+            formData.append("username", values.username);
+        }
+        if (values.email) {
+            formData.append("email", values.email);
+        }
+        if (values.nickname) {
+            formData.append("nickname", values.nickname);
+        }
+        if (values.gender) {
+            formData.append("gender", values.gender);
+        }
+        if (values.bio) {
+            formData.append("bio", values.bio);
+        }
+        try {
+            let res = await axios.post("/api/user/profile", formData);
+            if (res.data.success === 0) {
+                message.info("Update profile success! ");
+                props.setReload((p) => p + 1);
+            } else {
+                message.error(`Update profile error: ${res.data.message}`);
+            }
+        } catch (error) {
+            message.error(`Update profile error: ${error.response.data.message}`);
+        }
     };
 
     return (
@@ -91,7 +118,7 @@ function Profile(props) {
                     <Form
                         form={form}
                         name="profile"
-                        onFinish={onFinish}
+                        onFinish={submitProfile}
                         scrollToFirstError
                         {...formItemLayout}
                         id="profileForm"
@@ -112,14 +139,11 @@ function Profile(props) {
                         <Form.Item
                             name="email"
                             label="E-mail"
+                            initialValue={props.user.email}
                             rules={[
                                 {
                                     type: "email",
                                     message: "The input is not valid E-mail!",
-                                },
-                                {
-                                    required: true,
-                                    message: "Please input your E-mail!",
                                 },
                             ]}
                         >
@@ -129,13 +153,7 @@ function Profile(props) {
                         <Form.Item
                             name="nickname"
                             label="Nickname"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your nickname!",
-                                    whitespace: true,
-                                },
-                            ]}
+                            initialValue={props.user.nickname}
                         >
                             <Input />
                         </Form.Item>
@@ -143,12 +161,7 @@ function Profile(props) {
                         <Form.Item
                             name="gender"
                             label="Gender"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please select gender!",
-                                },
-                            ]}
+                            initialValue={props.user.gender}
                         >
                             <Select placeholder="select your gender">
                                 <Option value="male">Male</Option>
@@ -157,7 +170,7 @@ function Profile(props) {
                             </Select>
                         </Form.Item>
 
-                        <Form.Item name="Bio" label="Bio">
+                        <Form.Item name="bio" label="Bio" initialValue={props.user.bio}>
                             <TextArea />
                         </Form.Item>
 

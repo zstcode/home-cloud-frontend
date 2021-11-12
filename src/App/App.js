@@ -33,7 +33,8 @@ const App = () => {
     const location = useLocation();
     const [user, setUser] = useState({
         username: "",
-        status: 0, email: "",
+        status: 0,
+        email: "",
         nickname: "",
         gender: 0,
         bio: "",
@@ -68,6 +69,11 @@ const App = () => {
                     setUser({
                         username: res.data["username"],
                         status: res.data["status"],
+                        email: res.data["email"],
+                        nickname: res.data["nickname"],
+                        gender: res.data["gender"],
+                        bio: res.data["bio"],
+                        avatar: res.data["avatar"],
                     });
                 } else {
                     message.error(res.data["message"]);
