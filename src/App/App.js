@@ -18,6 +18,7 @@ import FileList from "./Files/FileList";
 import Profile from "./Settings/Profile";
 import profileMenu from "./menus/ProfileMenu";
 import transerListMenu from "./menus/TransferListMenu";
+import Setting from "./Settings/Setting";
 
 import { useState, useEffect } from "react";
 
@@ -39,6 +40,7 @@ const App = () => {
         gender: 0,
         bio: "",
         avartar: "",
+        account_salt: "",
     });
     // transferList: {id,name,status,progress}[]
     const [transferList, setTransferList] = useState([]);
@@ -74,6 +76,7 @@ const App = () => {
                         gender: res.data["gender"],
                         bio: res.data["bio"],
                         avatar: res.data["avatar"],
+                        account_salt: res.data["account_salt"],
                     });
                 } else {
                     message.error(res.data["message"]);
@@ -206,7 +209,7 @@ const App = () => {
                                     key="settings"
                                     icon={<SettingOutlined />}
                                 >
-                                    Settings
+                                    <Link to="/setting">Settings</Link>
                                 </Menu.Item>
                             </SubMenu>
                         </Menu>
@@ -236,6 +239,9 @@ const App = () => {
                                 <Profile
                                     user={user}
                                     setReload={setReload} />} />
+                            <Route path="/setting" render={() =>
+                                <Setting user={user} setReload={setReload} />
+                            } />
                         </Switch>
                     </Layout>
                 </Layout>
