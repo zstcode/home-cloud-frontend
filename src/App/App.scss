@@ -29,7 +29,8 @@
                 size: 12pt;
             }
             #logosvg {
-                max-height: 60%;
+                max-height: 30px;
+                max-width: 30px;
             }
             #logotext {
                 margin-left: 5px;
@@ -84,6 +85,7 @@
     #sideMenu {
         border-right: 0;
         height: 100%;
+        background: #fafafa;
     }
 
     .site-layout-background {

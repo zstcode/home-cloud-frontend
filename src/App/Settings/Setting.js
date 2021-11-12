@@ -83,7 +83,7 @@ function Setting(props) {
                                 },
                             ]}
                         >
-                            <Input type="password" />
+                            <Input.Password />
                         </Form.Item>
                         <Form.Item
                             name="npass"
@@ -95,7 +95,7 @@ function Setting(props) {
                                 },
                             ]}
                         >
-                            <Input type="password" />
+                            <Input.Password />
                         </Form.Item>
 
                         <Form.Item
@@ -118,7 +118,7 @@ function Setting(props) {
                                 }),
                             ]}
                         >
-                            <Input type="password" />
+                            <Input.Password />
                         </Form.Item>
 
                         <Form.Item {...tailFormItemLayout}>

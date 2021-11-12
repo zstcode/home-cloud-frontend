@@ -44,7 +44,7 @@ function SignUp(props) {
         formData.append("accountSalt", account_salt);
         try {
             await axios.post("/api/register", formData);
-            history.replace("/");
+            history.replace("/login");
         } catch (error) {
             message.error(error.response.data.message);
         }
@@ -107,8 +107,8 @@ function SignUp(props) {
                             value
                                 ? Promise.resolve()
                                 : Promise.reject(
-                                      new Error("Should accept agreement")
-                                  ),
+                                    new Error("Should accept agreement")
+                                ),
                     },
                 ]}
                 {...formTailLayout}
