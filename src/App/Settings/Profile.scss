@@ -15,8 +15,14 @@
             width: 100%;
             justify-content: center;
             margin-bottom: 20px;
-            #avatar {
+            #profileAvatar {
                 border: 3px solid rgb(240, 10, 10);
+                vertical-align: middle;
+                display: flex;
+                align-items: center;
+                user-select: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
                 &:hover {
                     cursor: pointer;
                 }

@@ -1,9 +1,7 @@
 import { Layout, Menu, Avatar, Button, Dropdown, message } from "antd";
 import {
-    ShareAltOutlined,
     UserOutlined,
     StarOutlined,
-    DashboardOutlined,
 } from "@ant-design/icons";
 import {
     FileOutlined,
@@ -43,7 +41,10 @@ const App = () => {
     });
     // transferList: {id,name,status,progress}[]
     const [transferList, setTransferList] = useState([]);
-    const [transferListVisible, setTransferListVisible] = useState(false)
+    const [transferListVisible, setTransferListVisible] = useState(false);
+
+    // Use to force reload current component
+    const [reload, setReload] = useState(1);
 
     // Intercept all 401 response and rediret to login page
     axios.interceptors.response.use(
@@ -76,7 +77,7 @@ const App = () => {
             }
         };
         fetchUser();
-    }, []);
+    }, [reload]);
 
     useEffect(() => {
         // Block the refresh if there are any uploading or downloading progress
@@ -126,11 +127,16 @@ const App = () => {
                             <Button
                                 ghost
                                 size="large"
-                                icon={
+                                icon={user.avartar ?
                                     <Avatar
                                         id="avatar"
-                                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                                    />
+                                        src={user.avartar}
+                                    /> :
+                                    <Avatar id="avatar"
+                                        style={{ backgroundColor: "#00a2ae" }}
+                                    >
+                                        {user.username.slice(0, 2)}
+                                    </Avatar>
                                 }
                                 className="avatarButtom"
                             ></Button>
@@ -155,9 +161,6 @@ const App = () => {
                         }
                         defaultOpenKeys={["filesSub", "accountSub"]}
                     >
-                        {/* <Menu.Item key="dashboard" icon={<DashboardOutlined />}>
-                            Dashboard
-                        </Menu.Item> */}
                         <SubMenu
                             key="filesSub"
                             icon={<FileOutlined />}
@@ -171,9 +174,6 @@ const App = () => {
                             </Menu.Item>
                             <Menu.Item key="favorites" icon={<StarOutlined />}>
                                 Favorites
-                            </Menu.Item>
-                            <Menu.Item key="share" icon={<ShareAltOutlined />}>
-                                Shared
                             </Menu.Item>
                         </SubMenu>
                         <SubMenu
@@ -217,7 +217,10 @@ const App = () => {
                             path="/files"
                             component={() => <Redirect to="/files/" />}
                         />
-                        <Route path="/profile" component={Profile} />
+                        <Route path="/profile" render={() =>
+                            <Profile
+                                user={user}
+                                setReload={setReload} />} />
                     </Switch>
                 </Layout>
             </Layout>

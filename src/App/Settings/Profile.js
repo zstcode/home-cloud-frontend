@@ -1,28 +1,11 @@
-import { Layout, PageHeader, Avatar, Upload, message } from "antd";
-import React from "react";
+import { Layout, PageHeader, Avatar } from "antd";
+import React, { useRef } from "react";
 import { Form, Input, Select, Button } from "antd";
+import avatarUploadHandler from "./utils/avatarUpload";
 import "./Profile.scss";
 
 const { Option } = Select;
 const { TextArea } = Input;
-
-const uploadProps = {
-    name: "file",
-    action: "http://127.0.0.1:3000/qfqwjbhnqkwdhju",
-    headers: {
-        authorization: "authorization-text",
-    },
-    onChange(info) {
-        if (info.file.status !== "uploading") {
-            console.log(info.file, info.fileList);
-        }
-        if (info.file.status === "done") {
-            message.success(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === "error") {
-            message.error(`${info.file.name} file upload failed.`);
-        }
-    },
-};
 
 const formItemLayout = {
     labelCol: {
@@ -47,9 +30,25 @@ const tailFormItemLayout = {
     },
 };
 
+const avatartSize = {
+    xs: 64,
+    sm: 64,
+    md: 64,
+    lg: 80,
+    xl: 80,
+    xxl: 100,
+};
+
 // Component for user profile settings
 function Profile(props) {
     const [form] = Form.useForm();
+    const avatartUploader = useRef();
+
+    const handleAvatarUpload = async (event) => {
+        event.preventDefault();
+        await avatarUploadHandler(avatartUploader.current.files[0], props.setReload);
+        avatartUploader.current.value = "";
+    }
 
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
@@ -60,20 +59,33 @@ function Profile(props) {
             <PageHeader className="profilePageHeader" title="Profile" />
             <div id="profileContent">
                 <div id="avatarContainer">
-                    <Upload {...uploadProps}>
+                    <input
+                        type="file"
+                        name="avatar"
+                        accept="image/*"
+                        ref={avatartUploader}
+                        onChange={handleAvatarUpload}
+                        style={{ display: "none" }}
+                    />
+                    {props.user.avatar ?
                         <Avatar
-                            id="avatar"
-                            size={{
-                                xs: 64,
-                                sm: 64,
-                                md: 64,
-                                lg: 80,
-                                xl: 80,
-                                xxl: 100,
+                            id="profileAvatar"
+                            size={avatartSize}
+                            src={props.user.avatar}
+                            onClick={() => avatartUploader.current.click()}
+                        /> :
+                        <Avatar id="profileAvatar"
+                            style={{
+                                backgroundColor:
+                                    "#00a2ae",
+                                fontSize: "25pt",
                             }}
-                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                        />
-                    </Upload>
+                            size={avatartSize}
+                            onClick={() => avatartUploader.current.click()}
+                        >
+                            {props.user.username.slice(0, 2)}
+                        </Avatar>
+                    }
                 </div>
                 <div id="profileFormContainer">
                     <Form
