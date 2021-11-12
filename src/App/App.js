@@ -41,6 +41,7 @@ const App = () => {
         bio: "",
         avartar: "",
     });
+    // transferList: {id,name,status,progress}[]
     const [transferList, setTransferList] = useState([]);
     const [transferListVisible, setTransferListVisible] = useState(false)
 
@@ -78,6 +79,7 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        // Block the refresh if there are any uploading or downloading progress
         if (transferList.filter((v) => v.status === 0).length > 0) {
             const preventRefresh = (e) => {
                 e.preventDefault();

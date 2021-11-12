@@ -88,6 +88,7 @@ function FileList(props) {
         }
     }, [match, props.user]);
 
+    // Columns of the FileList table
     const columns = [
         {
             title: "File Name",

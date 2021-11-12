@@ -15,6 +15,8 @@ const UploadHandler = async (files, path, callback, setTransferList) => {
                 return [{ id: id, name: file.name, progress: 0, status: 0 }, ...prev]
             })
             let res = await axios.post("/api/file/upload", formData, {
+                // Update the progress of transfering files
+                // status: 0->transfering 1->complete 2->error
                 onUploadProgress: (progressEvent) => {
                     if (progressEvent.lengthComputable) {
                         const percentCompleted = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
@@ -145,7 +147,7 @@ const FetchInfo = async (
     }
 };
 
-// HandleDelete: Delete file based what the paths
+// HandleDelete: Delete file based on the paths
 const HandleDelete = (paths, syncFolder, setSelectedRows) => {
     const title =
         paths.length === 1

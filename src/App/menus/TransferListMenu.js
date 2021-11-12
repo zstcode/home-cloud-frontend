@@ -1,5 +1,6 @@
 import { Menu, Progress } from "antd";
 
+// transerListMenu: The menu showing the status of uploading or downloading progress
 const transerListMenu = (transferList) => {
     return (
         <Menu id="progressMenu">
