@@ -120,8 +120,8 @@ function SignUp(props) {
 
             <Form.Item {...formTailLayout}>
                 <div id="buttonContainer">
-                    <Button type="primary" htmlType="submit">
-                        SignUp
+                    <Button type="primary" htmlType="submit" block>
+                        Sign Up
                     </Button>
                 </div>
             </Form.Item>

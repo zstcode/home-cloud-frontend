@@ -57,6 +57,36 @@ async function DeriveAuthKey(masterKey, len) {
     }).toString("hex");
 }
 
+// DeriveAuthKey: Derive Auth key for authentication from the master key. Use WebCrypto API if available
+async function DeriveEncryptionKey(masterKey, len) {
+    if (window.isSecureContext) {
+        const keyMaterial = await crypto.subtle.importKey(
+            "raw",
+            masterKey,
+            { name: "HKDF" },
+            false,
+            ["deriveBits"]
+        );
+        const derivedBits = await crypto.subtle.deriveBits(
+            {
+                name: "HKDF",
+                salt: Buffer.from(""),
+                info: Buffer.from("HOME-CLOUD-ENCRYPTION-KEY-FOR-FILES"),
+                hash: "SHA-512",
+            },
+            keyMaterial,
+            len
+        );
+        return Buffer.from(derivedBits).toString("hex");
+    }
+    return hkdf(masterKey, len >> 3, {
+        hash: "SHA-512",
+        info: "HOME-CLOUD-ENCRYPTION-KEY-FOR-FILES",
+    }).toString("hex");
+}
+
+
+
 // GenerateSalt: Generate a random salt for sign up
 async function GenerateSalt(len) {
     len = len / 4;
@@ -70,4 +100,4 @@ async function GenerateSalt(len) {
     return salt.join("");
 }
 
-export { DeriveMasterKey, DeriveAuthKey, GenerateSalt };
+export { DeriveMasterKey, DeriveAuthKey, DeriveEncryptionKey, GenerateSalt };

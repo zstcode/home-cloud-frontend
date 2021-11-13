@@ -20,7 +20,7 @@ const profileMenu = (username, history) => (
             icon={<SettingOutlined />}
             className="profileMenuItem"
         >
-            Settings
+            <Link to="/setting" >Settings</Link>
         </Menu.Item>
         <Menu.Item
             key="Logout"

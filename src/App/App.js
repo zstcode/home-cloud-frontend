@@ -174,8 +174,8 @@ const App = () => {
                         <Menu
                             id="sideMenu"
                             mode="inline"
-                            defaultSelectedKeys={
-                                history.location.pathname.split("/").filter((v) => v.length > 0)[0]
+                            selectedKeys={
+                                [history.location.pathname.split("/").filter((v) => v.length > 0)[0]]
                             }
                             defaultOpenKeys={["filesSub", "accountSub"]}
                         >

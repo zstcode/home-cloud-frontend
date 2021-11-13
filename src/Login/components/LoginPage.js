@@ -1,7 +1,7 @@
 import { Form, Input, Checkbox, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { DeriveMasterKey, DeriveAuthKey } from "../../utils/crypto";
+import { DeriveMasterKey, DeriveAuthKey, DeriveEncryptionKey } from "../../utils/crypto";
 import { useHistory, useLocation } from "react-router";
 import { message } from "antd";
 
@@ -42,6 +42,11 @@ function LoginPage(props) {
         );
         const authKey = await DeriveAuthKey(masterKey, 256);
         formData.append("password", authKey);
+        const encryptionKey = await DeriveEncryptionKey(masterKey, 256);
+
+        // The server will return the encryptionKey in the cookies with path parameter
+        formData.append("encryptionKey", encryptionKey);
+        formData.append("remember", values.remember ? 1 : 0);
         try {
             await axios.post("/api/login", formData);
             let { from } = location.state || { from: { pathname: "/" } };
@@ -87,7 +92,7 @@ function LoginPage(props) {
 
             <Form.Item {...formTailLayout}>
                 <div id="buttonContainer">
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" block>
                         Login
                     </Button>
                 </div>
