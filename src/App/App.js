@@ -19,6 +19,8 @@ import Profile from "./Settings/Profile";
 import profileMenu from "./menus/ProfileMenu";
 import transerListMenu from "./menus/TransferListMenu";
 import Setting from "./Settings/Setting";
+import Favorites from "./Files/Favorites";
+import SearchPage from "./Files/Search";
 
 import { useState, useEffect } from "react";
 
@@ -188,10 +190,10 @@ const App = () => {
                                     <Link to="/files">My Files</Link>
                                 </Menu.Item>
                                 <Menu.Item key="search" icon={<SearchOutlined />}>
-                                    Search
+                                    <Link to="/search">Search</Link>
                                 </Menu.Item>
                                 <Menu.Item key="favorites" icon={<StarOutlined />}>
-                                    Favorites
+                                    <Link to="/favorites">Favorites</Link>
                                 </Menu.Item>
                             </SubMenu>
                             <SubMenu
@@ -235,6 +237,10 @@ const App = () => {
                                 path="/files"
                                 component={() => <Redirect to="/files/" />}
                             />
+                            <Route path="/favorites" render={() =>
+                                <Favorites />} />
+                            <Route path="/search" render={() =>
+                                <SearchPage />} />
                             <Route path="/profile" render={() =>
                                 <Profile
                                     user={user}

@@ -61,6 +61,11 @@
                     background-color: #1890ff;
                 }
                 .avatarButtom {
+                    &[ant-click-animating-without-extra-node]:after {
+                        border: 0 none;
+                        opacity: 0;
+                        animation: none 0 ease 0 1 normal;
+                    }
                     #avatar {
                         border: 3px solid #fff;
                         box-sizing: content-box;

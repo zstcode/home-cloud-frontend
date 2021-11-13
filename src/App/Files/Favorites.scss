@@ -1,0 +1,12 @@
+#favoritesLayout {
+    width: 100%;
+    height: 100%;
+    .singleTableArea {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        #favoriteTableContainer {
+            width: 90%;
+        }
+    }
+}

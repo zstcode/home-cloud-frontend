@@ -259,7 +259,7 @@ function FileList(props) {
     };
 
     return (
-        <div id="fileListArea">
+        <Layout id="fileListArea">
             <NavigateBreadcrumb path={folder.path} />
             <PageHeader
                 className="site-layout-background pageTitle"
@@ -339,7 +339,7 @@ function FileList(props) {
                     />
                 </div>
             </Content>
-        </div>
+        </Layout>
     );
 }
 
