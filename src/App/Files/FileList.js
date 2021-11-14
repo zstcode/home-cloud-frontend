@@ -47,7 +47,6 @@ function FileList(props) {
         name: "",
         root: true,
         path: "",
-        encryption: false,
     });
     const [fileList, setFileList] = useState([]);
     const [currentFile, setCurrentFile] = useState({
@@ -249,7 +248,7 @@ function FileList(props) {
         upload: syncFolder,
     };
     const settingsMenuCallBack = {
-        encryption: () => message.error("Encryption is not supported now! "),
+        folderRename: () => message.error("Folder rename is not supported now! "),
     };
     const fileManegeCallback = {
         rename: () => message.error("Rename is not supported now! "),
@@ -270,7 +269,7 @@ function FileList(props) {
                 }
                 title={folder.name}
                 tags={
-                    folder.encryption ? (
+                    props.user.encryption ? (
                         <Tag color="blue">Encrypted</Tag>
                     ) : (
                         <></>

@@ -89,7 +89,6 @@ const FetchInfo = async (
                 name: pathData.data.info.Name,
                 root: pathData.data.root,
                 path: pathData.data.info.Position,
-                encryption: false,
             });
             setPreviewVisable(false);
         } else {

@@ -6,11 +6,11 @@ function SettingMenu(props) {
     const menu = (
         <Menu className="fileglobaldropMenu">
             <Menu.Item
-                key="encryption"
+                key="folderrename"
                 className="filedropMenuItem"
-                onClick={props.callback.encryption}
+                onClick={props.callback.folderRename}
             >
-                Encryption
+                Folder Rename
             </Menu.Item>
         </Menu>
     );

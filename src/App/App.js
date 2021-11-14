@@ -43,6 +43,7 @@ const App = () => {
         bio: "",
         avartar: "",
         account_salt: "",
+        encryption: false,
     });
     // transferList: {id,name,status,progress}[]
     const [transferList, setTransferList] = useState([]);
@@ -79,6 +80,7 @@ const App = () => {
                         bio: res.data["bio"],
                         avatar: res.data["avatar"],
                         account_salt: res.data["account_salt"],
+                        encryption: res.data["encryption"]
                     });
                 } else {
                     message.error(res.data["message"]);
