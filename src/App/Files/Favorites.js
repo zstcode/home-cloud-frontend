@@ -103,8 +103,11 @@ function Favorites(props) {
     ];
     return (
         <Layout id="favoritesLayout">
-            <PageHeader title="Favorite Files" />
-            <Content className="singleTableArea">
+            <PageHeader
+                title="Favorite Files"
+                className="site-layout-background pageTitle"
+            />
+            <Content id="favoriteTableArea" className="site-layout-background" >
                 <div id="favoriteTableContainer">
                     <Table id="favoritesTable" columns={columns} dataSource={favoriteFileList} />
                 </div>

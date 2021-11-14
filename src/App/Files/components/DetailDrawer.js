@@ -3,17 +3,16 @@ import { Drawer, List } from "antd";
 // File details drawer
 function DetailDrawser(props) {
     const data = [
-        `File Name: ${props.file.name}`,
+        `Name: ${props.file.name}`,
         `Size: ${props.file.size}`,
         `Path: ${props.file.position}`,
         `Create Time: ${props.file.createTime}`,
         `Last Modified Time: ${props.file.updateTime}`,
         `Creator: ${props.file.creator}`,
         `Owner: ${props.file.owner}`,
-        `Shared: ${
-            props.file.shared
-                ? "This file has been shared."
-                : "Only you can access."
+        `Shared: ${props.file.shared
+            ? "This file has been shared."
+            : "Only you can access."
         }`,
         `Favorite: ${props.file.favorite ? "Yes" : "No"}`,
     ];

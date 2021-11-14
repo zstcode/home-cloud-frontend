@@ -30,7 +30,7 @@ import { HandleDelete, HandleFavorite, FetchInfo } from "./utils/FileHanlder";
 import { formatBytes } from "./utils/utils";
 
 import "./FileList.scss";
-import { useRouteMatch } from "react-router";
+import { useHistory, useRouteMatch } from "react-router";
 import { Link } from "react-router-dom";
 
 const { Content } = Layout;
@@ -41,6 +41,7 @@ function FileList(props) {
 
     const [detailVisable, setDetailVisable] = useState(false);
     const [previewVisable, setPreviewVisable] = useState(false);
+    const history = useHistory();
 
     const [folder, setFolder] = useState({
         name: "",
@@ -182,7 +183,7 @@ function FileList(props) {
                             setCurrentFile({
                                 name: record.name,
                                 position: record.position,
-                                size: record.size,
+                                size: record.dir === 0 ? record.size : "NA",
                                 type: record.type,
                                 createTime: record.createTime,
                                 updateTime: record.updateTime,
@@ -225,7 +226,7 @@ function FileList(props) {
                         setCurrentFile({
                             name: record.name,
                             position: record.position,
-                            size: record.size,
+                            size: record.dir === 0 ? record.size : "NA",
                             type: record.type,
                             createTime: record.createTime,
                             updateTime: record.updateTime,
@@ -262,9 +263,11 @@ function FileList(props) {
         <Layout id="fileListArea">
             <NavigateBreadcrumb path={folder.path} />
             <PageHeader
-                className="site-layout-background pageTitle"
-                backIcon={folder.path.length > 0 ? true : false}
-                onBack={() => null}
+                className="site-layout-background filePageTitle"
+                onBack={!folder.root ?
+                    () => history.push("/files" + folder.path.split("/").slice(0, -1).join("/")) :
+                    null
+                }
                 title={folder.name}
                 tags={
                     folder.encryption ? (
@@ -299,7 +302,7 @@ function FileList(props) {
                 setVisible={setDetailVisable}
                 file={currentFile}
             />
-            <Content className="site-layout-background contentArea">
+            <Content className="site-layout-background" id="fileListcontentArea">
                 <div id="fileHeader">
                     <div id="fileListType">Files</div>
                     <div id="controlHeader">

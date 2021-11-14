@@ -82,8 +82,11 @@ function Profile(props) {
     };
 
     return (
-        <Layout id="profileLayout">
-            <PageHeader className="profilePageHeader" title="Profile" />
+        <Layout id="profileLayout" className="site-layout-background">
+            <PageHeader
+                title="Profile"
+                className="site-layout-background pageTitle"
+            />
             <div id="profileContent">
                 <div id="avatarContainer">
                     <input

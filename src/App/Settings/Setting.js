@@ -10,8 +10,11 @@ const { TabPane } = Tabs;
 // Component for user settings
 function Setting(props) {
     return (
-        <Layout id="settingLayout">
-            <PageHeader title="Setting" />
+        <Layout id="settingLayout" className="site-layout-background">
+            <PageHeader
+                title="Setting"
+                className="site-layout-background pageTitle"
+            />
             <div id="settingContent">
                 <div id="settingContainer">
                     <Tabs>

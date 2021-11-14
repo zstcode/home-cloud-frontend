@@ -102,6 +102,10 @@
         overflow-x: hidden;
     }
 
+    .pageTitle {
+        padding: 20px 24px 10px;
+    }
+
     @media screen and (max-width: 991px) {
         #sider {
             position: absolute;
