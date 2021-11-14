@@ -2,15 +2,13 @@ import { Layout, Menu, Avatar, Button, Dropdown, message, Spin } from "antd";
 import {
     UserOutlined,
     StarOutlined,
-} from "@ant-design/icons";
-import {
     FileOutlined,
     ProfileOutlined,
-} from "@ant-design/icons";
-import {
     CloudUploadOutlined,
     SettingOutlined,
     SearchOutlined,
+    DeploymentUnitOutlined,
+    TeamOutlined
 } from "@ant-design/icons";
 import { Switch, Route, Link } from "react-router-dom";
 import { Redirect, useHistory, useLocation } from "react-router";
@@ -21,6 +19,7 @@ import transerListMenu from "./menus/TransferListMenu";
 import Setting from "./Settings/Setting";
 import Favorites from "./Files/Favorites";
 import SearchPage from "./Files/Search";
+import Users from "./Admin/Users";
 
 import { useState, useEffect } from "react";
 
@@ -181,7 +180,11 @@ const App = () => {
                             selectedKeys={
                                 [history.location.pathname.split("/").filter((v) => v.length > 0)[0]]
                             }
-                            defaultOpenKeys={["filesSub", "accountSub"]}
+                            defaultOpenKeys={
+                                user.status === 1 ?
+                                    ["filesSub", "accountSub", "adminSub"] :
+                                    ["filesSub", "accountSub"]
+                            }
                         >
                             <SubMenu
                                 key="filesSub"
@@ -216,6 +219,19 @@ const App = () => {
                                     <Link to="/setting">Settings</Link>
                                 </Menu.Item>
                             </SubMenu>
+                            {user.status === 1 ?
+                                <SubMenu
+                                    key="admin"
+                                    icon={<DeploymentUnitOutlined />}
+                                    title="Admin"
+                                >
+                                    <Menu.Item key="users" icon={<TeamOutlined />}>
+                                        <Link to="/users">
+                                            Users
+                                        </Link>
+                                    </Menu.Item>
+                                </SubMenu> :
+                                null}
                         </Menu>
                     </Sider>
 
@@ -226,7 +242,7 @@ const App = () => {
                         <Switch>
                             <Route
                                 path="/files/(.*)"
-                                render={() =>
+                                component={() =>
                                     <FileList
                                         user={user}
                                         setTransferList={setTransferList}
@@ -239,16 +255,20 @@ const App = () => {
                                 path="/files"
                                 component={() => <Redirect to="/files/" />}
                             />
-                            <Route path="/favorites" render={() =>
+                            <Route exact path="/favorites" component={() =>
                                 <Favorites />} />
-                            <Route path="/search" render={() =>
+                            <Route exact path="/search" component={() =>
                                 <SearchPage />} />
-                            <Route path="/profile" render={() =>
+                            <Route exact path="/profile" component={() =>
                                 <Profile
                                     user={user}
                                     setReload={setReload} />} />
-                            <Route path="/setting" render={() =>
+                            <Route exact path="/setting" component={() =>
                                 <Setting user={user} setReload={setReload} />
+                            } />
+                            <Route exact path="/users" component={() => <Users user={user} />} />
+                            <Route path="/" component={() =>
+                                <Redirect to="/404" />
                             } />
                         </Switch>
                     </Layout>
