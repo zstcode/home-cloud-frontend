@@ -74,7 +74,8 @@ const FetchInfo = async (
     setFolder,
     setFileList,
     setCurrentFile,
-    setPreviewVisable
+    setPreviewVisable,
+    currentFolderPath
 ) => {
     try {
         let folderPath = "/";
@@ -101,12 +102,6 @@ const FetchInfo = async (
             setPreviewVisable(false);
         } else {
             folderPath = pathData.data.parent_info.Position;
-            setFolder({
-                name: pathData.data.parent_info.Name,
-                root: pathData.data.parent_root,
-                path: pathData.data.parent_info.Position,
-                encryption: false,
-            });
             setCurrentFile({
                 name: pathData.data.info.Name,
                 position: pathData.data.info.Position,
@@ -126,6 +121,15 @@ const FetchInfo = async (
                 favorite: pathData.data.info.Favorite,
             });
             setPreviewVisable(true);
+            if (currentFolderPath === folderPath) {
+                return;
+            }
+            setFolder({
+                name: pathData.data.parent_info.Name,
+                root: pathData.data.parent_root,
+                path: pathData.data.parent_info.Position,
+                encryption: false,
+            });
         }
         formData = new URLSearchParams();
         formData.append("dir", folderPath);

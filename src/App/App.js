@@ -229,7 +229,7 @@ const App = () => {
                             </SubMenu>
                             {user.status === 1 ?
                                 <SubMenu
-                                    key="admin"
+                                    key="adminSub"
                                     icon={<DeploymentUnitOutlined />}
                                     title="Admin"
                                 >
@@ -250,7 +250,7 @@ const App = () => {
                         <Switch>
                             <Route
                                 path="/files/(.*)"
-                                component={() =>
+                                render={() =>
                                     <FileList
                                         user={user}
                                         setTransferList={setTransferList}
@@ -261,21 +261,21 @@ const App = () => {
                             <Route
                                 exact
                                 path="/files"
-                                component={() => <Redirect to="/files/" />}
+                                render={() => <Redirect to="/files/" />}
                             />
-                            <Route exact path="/favorites" component={() =>
+                            <Route exact path="/favorites" render={() =>
                                 <Favorites />} />
-                            <Route exact path="/search" component={() =>
+                            <Route exact path="/search" render={() =>
                                 <SearchPage />} />
-                            <Route exact path="/profile" component={() =>
+                            <Route exact path="/profile" render={() =>
                                 <Profile
                                     user={user}
                                     setReload={setReload} />} />
-                            <Route exact path="/setting" component={() =>
+                            <Route exact path="/setting" render={() =>
                                 <Setting user={user} setReload={setReload} />
                             } />
-                            <Route exact path="/users" component={() => <Users user={user} />} />
-                            <Route path="/" component={() =>
+                            <Route exact path="/users" render={() => <Users user={user} />} />
+                            <Route path="/" render={() =>
                                 <Redirect to="/404" />
                             } />
                         </Switch>

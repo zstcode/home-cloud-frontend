@@ -71,7 +71,8 @@ function FileList(props) {
             setFolder,
             setFileList,
             setCurrentFile,
-            setPreviewVisable
+            setPreviewVisable,
+            ""
         );
 
     // Fetch data when loading
@@ -81,9 +82,10 @@ function FileList(props) {
             setFolder,
             setFileList,
             setCurrentFile,
-            setPreviewVisable
+            setPreviewVisable,
+            folder.path
         );
-    }, [match]);
+    }, [match, folder.path]);
 
     // Columns of the FileList table
     const columns = [
