@@ -19,8 +19,8 @@ function NavigateBreadcrumb(props) {
     }
     return (
         <Breadcrumb id="navigateBreadcrumb">
-            {items.map((v) => (
-                <Breadcrumb.Item>
+            {items.map((v, index) => (
+                <Breadcrumb.Item key={index}>
                     <Link to={"/files" + v[0]}>{v[1]}</Link>
                 </Breadcrumb.Item>
             ))}
