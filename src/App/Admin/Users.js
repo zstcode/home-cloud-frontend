@@ -8,7 +8,8 @@ import {
     message,
     Modal,
     Input,
-    Popconfirm
+    Popconfirm,
+    Result
 } from "antd";
 import { useEffect, useState } from "react";
 import { formatBytes } from "../Files/utils/utils";
@@ -107,6 +108,7 @@ function Users(props) {
     const [currentUser, setCurrentUser] = useState({
         key: 0,
         name: "",
+        status: 0,
         quota: 0,
         encryption: false,
     })
@@ -120,7 +122,7 @@ function Users(props) {
         {
             title: 'Username',
             key: 'username',
-            width: "30%",
+            width: "15%",
             ellipsis: {
                 showTitle: false,
             },
@@ -135,7 +137,7 @@ function Users(props) {
         {
             title: 'Role',
             key: 'role',
-            width: "10%",
+            width: "15%",
             ellipsis: {
                 showTitle: false,
             },
@@ -146,7 +148,7 @@ function Users(props) {
         {
             title: 'Quota',
             key: 'quota',
-            width: "20%",
+            width: "15%",
             ellipsis: {
                 showTitle: false,
             },
@@ -157,7 +159,7 @@ function Users(props) {
         {
             title: 'Action',
             key: 'action',
-            width: "40%",
+            width: "55%",
             render: (record) => (
                 <Space size="middle">
                     <Button type="primary" onClick={() => {
@@ -186,21 +188,29 @@ function Users(props) {
     ];
     return (
         <Layout className="site-layout-background" id="usersLayout">
-            <PageHeader
-                title="User Management"
-                className="pageTitle"
+            <Result
+                className="usersPageBlockWarning"
+                status="warning"
+                title="Not Available"
+                subTitle="Admin page is not available in mobile devices! "
             />
-            <SetQuotaDialog
-                visible={quotaVisible}
-                user={currentUser}
-                setVisible={setQuotaVisible}
-                syncUserList={syncUserList}
-            />
-            <Content>
-                <div id="usersTableContainer">
-                    <Table id="favoritesTable" columns={columns} dataSource={userList} />
-                </div>
-            </Content>
+            <div id="usersContentContainer">
+                <PageHeader
+                    title="User Management"
+                    className="pageTitle"
+                />
+                <SetQuotaDialog
+                    visible={quotaVisible}
+                    user={currentUser}
+                    setVisible={setQuotaVisible}
+                    syncUserList={syncUserList}
+                />
+                <Content>
+                    <div id="usersTableContainer">
+                        <Table id="favoritesTable" columns={columns} dataSource={userList} />
+                    </div>
+                </Content>
+            </div>
         </Layout>
 
     )

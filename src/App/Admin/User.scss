@@ -1,5 +1,20 @@
 #usersLayout {
-    #usersTableContainer {
-        margin: 40px;
+    .usersPageBlockWarning {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        @media screen and (min-width: 768px) {
+            display: none;
+        }
+    }
+    #usersContentContainer {
+        #usersTableContainer {
+            margin: 40px;
+        }
+        @media screen and (max-width: 767px) {
+            display: none;
+        }
     }
 }
