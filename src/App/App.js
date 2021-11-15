@@ -58,6 +58,10 @@ const App = () => {
             if (error.response) {
                 if (error.response.status === 401) {
                     history.push("/login", { from: location });
+                } else if (error.response.status === 403) {
+                    history.replace("/403");
+                } else if (error.response.status === 404) {
+                    history.replace("/404");
                 }
             }
             return Promise.reject(error);
@@ -82,10 +86,14 @@ const App = () => {
                         encryption: res.data["encryption"]
                     });
                 } else {
-                    message.error(res.data["message"]);
+                    message.error(`Fetch user data error: ${res.data["message"]}`);
                 }
             } catch (error) {
-                message.error(error.response.data["message"]);
+                if (error.response !== undefined && error.response.data["message"] !== undefined) {
+                    message.error(`Fetch user data error: ${error.response.data["message"]}`);
+                } else {
+                    message.error(`Fetch user data error: ${error}`);
+                }
             }
         };
         fetchUser();

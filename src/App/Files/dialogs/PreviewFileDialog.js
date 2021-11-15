@@ -1,4 +1,4 @@
-import { Modal } from "antd";
+import { Modal, Result } from "antd";
 import { useHistory } from "react-router";
 
 // The dialog component for peviewing files
@@ -18,9 +18,10 @@ function PreviewFileDialog(props) {
             onCancel={handleClose}
             cancelButtonProps={{ style: { display: "none" } }}
         >
-            <h1>File Preview is not available now! </h1>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
+            <Result
+                status="warning"
+                title="File Preview is not available now! "
+            />
         </Modal>
     );
 }

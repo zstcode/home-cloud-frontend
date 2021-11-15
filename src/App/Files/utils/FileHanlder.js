@@ -59,7 +59,11 @@ const UploadHandler = async (files, path, callback, setTransferList) => {
             }
             await callback();
         } catch (error) {
-            message.error(error.response.data.message);
+            if (error.response !== undefined && error.response.data.message !== undefined) {
+                message.error(`Upload error: ${error.response.data.message}`);
+            } else {
+                message.error(`Upload error: ${error}`);
+            }
         }
     }
 };
@@ -84,6 +88,10 @@ const FetchInfo = async (
         const pathData = await axios.post("/api/file/get_info", formData);
         // If it is a file, will set the current folder as its parent and open the preview dialog
         // The backend will return the parent folder info if it is a file
+        if (pathData.data.success !== 0) {
+            message.error(`Fetch file list error: ${pathData.data.message}`);
+            return
+        }
         if (pathData.data.type === "folder") {
             setFolder({
                 name: pathData.data.info.Name,
@@ -122,6 +130,10 @@ const FetchInfo = async (
         formData = new URLSearchParams();
         formData.append("dir", folderPath);
         const fileData = await axios.post("/api/file/list_dir", formData);
+        if (fileData.data.success !== 0) {
+            message.error(`Fetch file list error: ${fileData.data.message}`);
+            return
+        }
         const files = fileData.data.children.map((v, idx) => {
             return {
                 key: idx,
@@ -141,8 +153,11 @@ const FetchInfo = async (
         });
         setFileList(files);
     } catch (error) {
-        console.log(error);
-        message.error(error.response.data.message);
+        if (error.response !== undefined && error.response.data.message !== undefined) {
+            message.error(`Fetch file list error: ${error.response.data.message}`);
+        } else {
+            message.error(`Fetch file list error: ${error}`);
+        }
     }
 };
 
@@ -173,9 +188,11 @@ const HandleDelete = (paths, syncFolder, setSelectedRows) => {
                                 );
                             }
                         } catch (error) {
-                            message.error(
-                                `Delete ${v} error: ${error.response.data.message}! `
-                            );
+                            if (error.response !== undefined && error.response.data.message !== undefined) {
+                                message.error(`Delete ${v} error: ${error.response.data.message}`);
+                            } else {
+                                message.error(`Delete ${v} error: ${error}`);
+                            }
                         }
                     })
                 );
@@ -208,9 +225,11 @@ const HandleFavorite = (paths, syncFolder, setSelectedRows) => {
                         );
                     }
                 } catch (error) {
-                    message.error(
-                        `Change Favorite for ${v} error: ${error.response.data.message}! `
-                    );
+                    if (error.response !== undefined && error.response.data.message !== undefined) {
+                        message.error(`Change Favorite for ${v} error: ${error.response.data.message}`);
+                    } else {
+                        message.error(`Change Favorite for ${v} error: ${error}`);
+                    }
                 }
             })
         )

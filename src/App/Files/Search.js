@@ -37,7 +37,11 @@ const onSearch = async (value, setSearchList, setLoading) => {
             message.error(`Search error: ${res.data["message"]}`);
         }
     } catch (error) {
-        message.error(`Search error: ${error.response.data["message"]}`);
+        if (error.response !== undefined && error.response.data["message"] !== undefined) {
+            message.error(`Search error: ${error.response.data["message"]}`);
+        } else {
+            message.error(`Search error: ${error}`);
+        }
     }
     setLoading(false);
 }

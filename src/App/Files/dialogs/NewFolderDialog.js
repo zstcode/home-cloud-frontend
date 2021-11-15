@@ -10,7 +10,7 @@ const handleSubmit = async (values, path, setVisible, syncFolder) => {
     formData.append("type", "folder");
     try {
         let res = await axios.post("/api/file/new", formData);
-        if (res.status !== 200) {
+        if (res.data.success !== 0) {
             message.error(
                 `Create folder ${values.name} at ${path} error: ${res.data.message}! `
             );
@@ -18,9 +18,11 @@ const handleSubmit = async (values, path, setVisible, syncFolder) => {
             message.info(`Create folder ${values.name} success! `);
         }
     } catch (error) {
-        message.error(
-            `Create folder ${values.name} at ${path} error: ${error.response.data.message}! `
-        );
+        if (error.response !== undefined && error.response.data.message !== undefined) {
+            message.error(`Create folder ${values.name} at ${path} error: ${error.response.data.message}! `);
+        } else {
+            message.error(`Create folder ${values.name} at ${path} error: ${error}`);
+        }
     }
     setVisible(false);
     await syncFolder();

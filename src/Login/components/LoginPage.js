@@ -52,7 +52,11 @@ function LoginPage(props) {
             let { from } = location.state || { from: { pathname: "/" } };
             history.replace(from);
         } catch (error) {
-            message.error(error.response.data.message);
+            if (error.response !== undefined && error.response.data.message !== undefined) {
+                message.error(`Login error: ${error.response.data.message}`);
+            } else {
+                message.error(`Login error: ${error}`);
+            }
         }
     }
     return (

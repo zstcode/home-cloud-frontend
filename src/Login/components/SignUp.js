@@ -46,7 +46,11 @@ function SignUp(props) {
             await axios.post("/api/register", formData);
             history.replace("/login");
         } catch (error) {
-            message.error(error.response.data.message);
+            if (error.response !== undefined && error.response.data.message !== undefined) {
+                message.error(`Sign up error: ${error.response.data.message}`);
+            } else {
+                message.error(`Sign up error: ${error}`);
+            }
         }
     }
     return (

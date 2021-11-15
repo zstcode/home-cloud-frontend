@@ -32,7 +32,11 @@ const syncFavoriteList = async (setFavoriteFileList) => {
             message.error(`Get favorite list error: ${res.data["message"]}`);
         }
     } catch (error) {
-        message.error(`Get favorite list error: ${error.response.data["message"]}`);
+        if (error.response !== undefined && error.response.data["message"] !== undefined) {
+            message.error(`Get favorite list error: ${error.response.data["message"]}`);
+        } else {
+            message.error(`Get favorite list error: ${error}`);
+        }
     }
 }
 

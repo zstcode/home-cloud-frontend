@@ -12,10 +12,9 @@ const handleSubmit = async (values, path, setVisible, syncFolder) => {
     formData.append("type", "file");
     try {
         let res = await axios.post("/api/file/new", formData);
-        if (res.status !== 200) {
+        if (res.data.success !== 0) {
             message.error(
-                `Create file ${
-                    values.name + values.extension
+                `Create file ${values.name + values.extension
                 } at ${path} error: ${res.data.message}! `
             );
         } else {
@@ -24,11 +23,14 @@ const handleSubmit = async (values, path, setVisible, syncFolder) => {
             );
         }
     } catch (error) {
-        message.error(
-            `Create file ${values.name + values.extension} at ${path} error: ${
-                error.response.data.message
-            }! `
-        );
+        if (error.response !== undefined && error.response.data.message !== undefined) {
+            message.error(
+                `Create file ${values.name + values.extension} at ${path} error: ${error.response.data.message
+                }! `
+            );
+        } else {
+            message.error(`Create file ${values.name + values.extension} at ${path} error: ${error}`);
+        }
     }
     setVisible(false);
     await syncFolder();
