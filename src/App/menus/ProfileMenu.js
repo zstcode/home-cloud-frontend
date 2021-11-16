@@ -2,6 +2,7 @@ import { LogoutOutlined, ProfileOutlined, SettingOutlined } from "@ant-design/ic
 import { Menu } from "antd";
 import { Link } from "react-router-dom";
 
+// profileMenu: menu in the avatar dropdown
 const profileMenu = (username, history) => (
     <Menu id="profileMenu" theme="dark">
         <Menu.Item id="profileUsername" key="username" disabled>

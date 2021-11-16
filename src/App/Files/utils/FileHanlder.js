@@ -4,6 +4,7 @@ import axios from "axios";
 
 const { confirm } = Modal;
 
+// UploadHandler: upload file to the server
 const UploadHandler = async (files, path, callback, setTransferList) => {
     for (const file of files) {
         let formData = new FormData();
@@ -121,6 +122,7 @@ const FetchInfo = async (
                 favorite: pathData.data.info.Favorite,
             });
             setPreviewVisable(true);
+            // if open the file in the folder, will not fetch file list in the folder for update
             if (currentFolderPath === folderPath) {
                 return;
             }

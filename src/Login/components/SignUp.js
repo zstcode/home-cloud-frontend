@@ -4,6 +4,7 @@ import {
     DeriveMasterKey,
     DeriveAuthKey,
     GenerateSalt,
+    DeriveEncryptionKey,
 } from "../../utils/crypto";
 import { useHistory } from "react-router";
 import { message } from "antd";
@@ -40,9 +41,13 @@ function SignUp(props) {
             512
         );
         const authKey = await DeriveAuthKey(masterKey, 256);
+        const encryptionKey = await DeriveEncryptionKey(masterKey, 256);
+
         formData.append("password", authKey);
         formData.append("accountSalt", account_salt);
+        formData.append("encryption", encryptionKey);
         try {
+            // will return encryption in the cookies if success
             await axios.post("/api/register", formData);
             history.replace("/login");
         } catch (error) {

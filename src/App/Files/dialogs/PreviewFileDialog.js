@@ -18,6 +18,7 @@ function PreviewFileDialog(props) {
             onCancel={handleClose}
             cancelButtonProps={{ style: { display: "none" } }}
         >
+            {/* Preview is not avaible  */}
             <Result
                 status="warning"
                 title="File Preview is not available now! "

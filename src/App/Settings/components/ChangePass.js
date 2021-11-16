@@ -1,5 +1,5 @@
 import { Form, Input, Button, message } from "antd";
-import { DeriveMasterKey, DeriveAuthKey, GenerateSalt } from "../../../utils/crypto";
+import { DeriveMasterKey, DeriveAuthKey, GenerateSalt, DeriveEncryptionKey } from "../../../utils/crypto";
 import axios from "axios";
 
 const formItemLayout = {
@@ -25,10 +25,11 @@ const tailFormItemLayout = {
     },
 };
 
-
+// ChangePass: The component for changing password tab
 function ChangePass(props) {
 
     const SecuritySubmitHandler = async (values) => {
+        // use old password to derive auth key
         const old_account_salt = props.user.account_salt;
         const old_masterKey = await DeriveMasterKey(
             values.opass,
@@ -36,7 +37,7 @@ function ChangePass(props) {
             512
         );
         const old_authKey = await DeriveAuthKey(old_masterKey, 256);
-
+        // Use new password to derive auth key and encryption key
         const new_account_salt = await GenerateSalt(256);
         const new_masterKey = await DeriveMasterKey(
             values.npass,
@@ -44,10 +45,13 @@ function ChangePass(props) {
             512
         );
         const new_authKey = await DeriveAuthKey(new_masterKey, 256);
+        const new_encryptionKey = await DeriveEncryptionKey(new_masterKey, 256);
         let formData = new URLSearchParams();
         formData.append("old", old_authKey);
         formData.append("new", new_authKey);
+        formData.append("new_encryption", new_encryptionKey);
         try {
+            // will return encryption key in cookies if success
             await axios.put("/api/user/password", formData);
             // If error, will not return 200
             message.info("Change password success");

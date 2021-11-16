@@ -18,6 +18,7 @@ import "./Search.scss";
 const { Content } = Layout;
 const { Search } = Input;
 
+// onSearch: submit the keyword for searching
 const onSearch = async (value, setSearchList, setLoading) => {
     setLoading(true);
     try {
@@ -46,6 +47,7 @@ const onSearch = async (value, setSearchList, setLoading) => {
     setLoading(false);
 }
 
+// SearchPage: Component for searching page
 function SearchPage(props) {
     const [searchList, setSearchList] = useState([]);
     const [loading, setLoading] = useState(false);

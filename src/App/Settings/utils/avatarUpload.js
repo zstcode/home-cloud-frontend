@@ -1,6 +1,7 @@
 import axios from "axios";
 import { message } from "antd";
 
+// avatarUploadHandler: submit new avatar
 const avatarUploadHandler = async (file, setReload) => {
     let formData = new FormData();
     formData.append("avatar", file);

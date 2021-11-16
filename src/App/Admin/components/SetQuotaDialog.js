@@ -5,6 +5,7 @@ import { formatBytes } from "../../Files/utils/utils";
 
 const { Option } = Select;
 
+// handleSubmit: Submit the set quota request for a user
 const handleSubmit = async (values, user, setVisible, syncUserList) => {
     let formData = new URLSearchParams();
     formData.append("user", user.name);
@@ -29,6 +30,8 @@ const handleSubmit = async (values, user, setVisible, syncUserList) => {
     await syncUserList();
 };
 
+// unitMapping: Map the unit of storage quota to options in the dialog
+// Default is GB
 const unitMapping = (unit) => {
     switch (unit) {
         case 'Bytes': return "0";
@@ -103,6 +106,7 @@ function SetQuotaDialog(props) {
                             message: "Please input new quota! ",
                         },
                         {
+                            // Only allow integers
                             pattern: /^[0-9]*$/,
                             message:
                                 "Please input integers! ",

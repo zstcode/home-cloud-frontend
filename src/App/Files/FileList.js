@@ -45,14 +45,19 @@ function FileList(props) {
 
     const [folder, setFolder] = useState({
         name: "",
+        // root: indicates if it is the root folder
         root: true,
+        // path: current folder path, e.g. /a/b
         path: "",
     });
     const [fileList, setFileList] = useState([]);
     const [currentFile, setCurrentFile] = useState({
         name: "",
+        // position: file path, e.g. /a/b.txt
         position: "",
+        // size: file size (byte)
         size: 0,
+        // type: indicate file type, e.g. image or video
         type: "",
         createTime: "",
         updateTime: "",
@@ -72,6 +77,7 @@ function FileList(props) {
             setFileList,
             setCurrentFile,
             setPreviewVisable,
+            // use empty string here to force sync all file list
             ""
         );
 
@@ -88,6 +94,7 @@ function FileList(props) {
     }, [match, folder.path]);
 
     // Columns of the FileList table
+    // Some col will be hidden when width get smaller
     const columns = [
         {
             title: "File Name",
@@ -214,6 +221,7 @@ function FileList(props) {
                 </Space>
             ),
         },
+        // This single button col will show in mobile devices
         {
             title: "Action",
             key: "action",
@@ -244,6 +252,7 @@ function FileList(props) {
         },
     ];
 
+    // callback function of menu items
     const uploadMenuCallBack = {
         nfile: () => setFileDiaglogvisible(true),
         nfolder: () => setFolderDiaglogvisible(true),

@@ -33,8 +33,10 @@ const { Header, Sider } = Layout;
 const App = () => {
     const history = useHistory();
     const location = useLocation();
+    // Current Login user
     const [user, setUser] = useState({
         username: "",
+        // status: 0 for normal user and 1 for admin
         status: 0,
         email: "",
         nickname: "",
@@ -44,7 +46,7 @@ const App = () => {
         account_salt: "",
         encryption: false,
     });
-    // transferList: {id,name,status,progress}[]
+    // transferList: {id,name,status,progress}[]->upload file history 
     const [transferList, setTransferList] = useState([]);
     const [transferListVisible, setTransferListVisible] = useState(false);
 
@@ -52,6 +54,7 @@ const App = () => {
     const [reload, setReload] = useState(1);
 
     // Intercept all 401 response and rediret to login page
+    // redirect 404 and 403 to custom 404 and 403 page
     axios.interceptors.response.use(
         (res) => res,
         (error) => {
@@ -89,6 +92,10 @@ const App = () => {
                     message.error(`Fetch user data error: ${res.data["message"]}`);
                 }
             } catch (error) {
+                // Skip the required login message for the first visit
+                if (error.response.status === 401) {
+                    return;
+                }
                 if (error.response !== undefined && error.response.data["message"] !== undefined) {
                     message.error(`Fetch user data error: ${error.response.data["message"]}`);
                 } else {
@@ -100,7 +107,7 @@ const App = () => {
     }, [reload]);
 
     useEffect(() => {
-        // Block the refresh if there are any uploading or downloading progress
+        // Block the refresh if there are any uploading or downloading progresses
         if (transferList.filter((v) => v.status === 0).length > 0) {
             const preventRefresh = (e) => {
                 e.preventDefault();
@@ -112,6 +119,7 @@ const App = () => {
         }
     }, [transferList])
 
+    //If fetching user is still in progress, display the loading page
     if (!user.username) {
         return (
             <Spin
@@ -130,6 +138,7 @@ const App = () => {
                     </div>
                     <div className="headerMenuContainer">
                         <div className="headerMenu">
+                            {/* If there is no upload history, hide the button */}
                             {transferList.length > 0 ?
                                 <Dropdown
                                     overlay={transerListMenu(transferList)}
@@ -147,7 +156,7 @@ const App = () => {
                                     ></Button>
                                 </Dropdown>
                                 : <></>}
-
+                            {/* The avatar button with dropdown to logout and jump to settings */}
                             <Dropdown
                                 overlay={profileMenu(user.username, history)}
                                 placement="bottomLeft"
@@ -182,6 +191,7 @@ const App = () => {
                         id="sider"
                     >
                         {/* Default to open all submenu and select item based on the path */}
+                        {/* Select the menu item based on url */}
                         <Menu
                             id="sideMenu"
                             mode="inline"
@@ -227,6 +237,7 @@ const App = () => {
                                     <Link to="/setting">Settings</Link>
                                 </Menu.Item>
                             </SubMenu>
+                            {/* Will not render the admin submenu if current user is not admin */}
                             {user.status === 1 ?
                                 <SubMenu
                                     key="adminSub"
@@ -248,6 +259,7 @@ const App = () => {
                         className="site-layout-background"
                     >
                         <Switch>
+                            {/* User render insteaf of component to prevent unnecessary destroy  */}
                             <Route
                                 path="/files/(.*)"
                                 render={() =>

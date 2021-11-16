@@ -61,6 +61,8 @@
                     background-color: #1890ff;
                 }
                 .avatarButtom {
+                    display: flex;
+                    justify-content: center;
                     &[ant-click-animating-without-extra-node]:after {
                         border: 0 none;
                         opacity: 0;
@@ -161,6 +163,8 @@
 #progressMenu {
     width: 400px;
     overflow-x: hidden;
+    max-height: 60vh;
+    overflow-y: scroll;
     @media screen and (max-width: 991px) {
         width: 240px;
     }

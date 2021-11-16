@@ -57,7 +57,7 @@ async function DeriveAuthKey(masterKey, len) {
     }).toString("hex");
 }
 
-// DeriveAuthKey: Derive Auth key for authentication from the master key. Use WebCrypto API if available
+// DeriveEncryptionKey: Derive Encryption key for encryption file from the master key. Use WebCrypto API if available
 async function DeriveEncryptionKey(masterKey, len) {
     if (window.isSecureContext) {
         const keyMaterial = await crypto.subtle.importKey(

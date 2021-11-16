@@ -29,7 +29,7 @@ const tailFormItemLayout = {
     },
 };
 
-
+// EncryptionSetting: The component for setting encryption algorithm in Encryption tab
 function EncryptionSetting(props) {
     const history = useHistory();
 

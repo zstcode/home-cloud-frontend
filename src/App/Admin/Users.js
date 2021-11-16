@@ -22,6 +22,7 @@ import "./User.scss";
 
 const { Content } = Layout;
 
+// syncUserList: Get the list of all users
 const syncUserList = async (setUserList) => {
     try {
         const userData = await axios.get("/api/admin/get_users");
@@ -47,6 +48,7 @@ const syncUserList = async (setUserList) => {
     }
 }
 
+// resetPassword: reset user password based on its username
 const resetPassword = async (user) => {
     if (user.encryption) {
         message.error("The user has enabled encryption, resetting password is not allowed! ");
@@ -84,6 +86,7 @@ const resetPassword = async (user) => {
     }
 }
 
+// deleteUser: delete a user based on its username
 const deleteUser = async (deletedUser, syncUserList) => {
     try {
         let formData = new URLSearchParams();
@@ -108,8 +111,11 @@ function Users(props) {
     const [currentUser, setCurrentUser] = useState({
         key: 0,
         name: "",
+        // status: 0 for normal user, 1 for admin
         status: 0,
+        // quota: storage quota of the user (byte)
         quota: 0,
+        // encryption: user have enabled encryption or not
         encryption: false,
     })
     const [quotaVisible, setQuotaVisible] = useState(false);
@@ -160,6 +166,9 @@ function Users(props) {
             title: 'Action',
             key: 'action',
             width: "55%",
+            ellipsis: {
+                showTitle: false,
+            },
             render: (record) => (
                 <Space size="middle">
                     <Button type="primary" onClick={() => {
@@ -188,6 +197,7 @@ function Users(props) {
     ];
     return (
         <Layout className="site-layout-background" id="usersLayout">
+            {/* Admin pages are not showing in the mobile devices without enough width */}
             <Result
                 className="usersPageBlockWarning"
                 status="warning"

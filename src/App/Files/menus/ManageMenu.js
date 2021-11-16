@@ -21,6 +21,7 @@ function ManageMenu(props) {
 
     const menu = (
         <Menu className="fileglobaldropMenu">
+            {/* showinMobile indicates that the menu item is only avaible in mobile devices */}
             <Menu.Item
                 key="nfile"
                 icon={<FileAddOutlined />}

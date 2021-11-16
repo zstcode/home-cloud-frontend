@@ -16,6 +16,7 @@ import axios from "axios";
 
 const { Content } = Layout;
 
+// syncFavoriteList: fetch favorite file list
 const syncFavoriteList = async (setFavoriteFileList) => {
     try {
         let res = await axios.get("/api/file/get_favorite");
@@ -40,6 +41,7 @@ const syncFavoriteList = async (setFavoriteFileList) => {
     }
 }
 
+// Favorites: component for showing favorite file list
 function Favorites(props) {
     const [favoriteFileList, setFavoriteFileList] = useState([]);
 

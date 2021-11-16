@@ -36,6 +36,7 @@ function UploadMenu(props) {
             >
                 New Folder
             </Menu.Item>
+            {/* Click on the menu item will trigger the click on input */}
             <Menu.Item
                 key="uploadfile"
                 icon={<UploadOutlined />}
