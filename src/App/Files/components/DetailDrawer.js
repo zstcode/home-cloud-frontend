@@ -10,10 +10,6 @@ function DetailDrawser(props) {
         `Last Modified Time: ${props.file.updateTime}`,
         `Creator: ${props.file.creator}`,
         `Owner: ${props.file.owner}`,
-        `Shared: ${props.file.shared
-            ? "This file has been shared."
-            : "Only you can access."
-        }`,
         `Favorite: ${props.file.favorite ? "Yes" : "No"}`,
     ];
     return (

@@ -63,7 +63,6 @@ function FileList(props) {
         updateTime: "",
         creator: "",
         owner: "",
-        shared: false,
         favorite: 0,
     });
     const [selectedRows, setSelectedRows] = useState([]);
@@ -199,7 +198,6 @@ function FileList(props) {
                                 updateTime: record.updateTime,
                                 creator: record.creator,
                                 owner: record.owner,
-                                shared: false,
                                 favorite: record.favorite,
                             });
                             setDetailVisable(true);
@@ -243,7 +241,6 @@ function FileList(props) {
                             updateTime: record.updateTime,
                             creator: record.creator,
                             owner: record.owner,
-                            shared: false,
                             favorite: record.favorite,
                         });
                         setDetailVisable(true);

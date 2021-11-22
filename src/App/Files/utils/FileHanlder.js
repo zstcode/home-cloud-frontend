@@ -124,7 +124,6 @@ const FetchInfo = async (
                     pathData.data.info.CreatedAt.slice(11, 19),
                 creator: pathData.data.info.CreatorId,
                 owner: pathData.data.info.OwnerId,
-                shared: false,
                 favorite: pathData.data.info.Favorite,
             });
             setPreviewVisable(true);
@@ -136,7 +135,6 @@ const FetchInfo = async (
                 name: pathData.data.parent_info.Name,
                 root: pathData.data.parent_root,
                 path: pathData.data.parent_info.Position,
-                encryption: false,
             });
         }
         formData = new URLSearchParams();
