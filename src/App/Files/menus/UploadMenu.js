@@ -15,7 +15,9 @@ function UploadMenu(props) {
             props.callback.upload,
             props.setTransferList
         );
-        upload.current.value = "";
+        if (upload.current !== null) {
+            upload.current.value = "";
+        }
     };
 
     const menu = (

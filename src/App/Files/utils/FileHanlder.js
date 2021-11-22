@@ -10,8 +10,8 @@ const UploadHandler = async (files, path, callback, setTransferList) => {
         let formData = new FormData();
         formData.append("dir", path);
         formData.append("file", file);
+        const id = uuidv4();
         try {
-            const id = uuidv4();
             setTransferList((prev) => {
                 return [{ id: id, name: file.name, progress: 0, status: 0 }, ...prev]
             })
@@ -37,7 +37,7 @@ const UploadHandler = async (files, path, callback, setTransferList) => {
                     uploadprogress.status = 2;
                     return newlist;
                 })
-                message.error(res.data.message);
+                message.error(`Upload error: ${res.data.message}`);
             } else {
                 if (res.data.files[file.name].result) {
                     setTransferList((prev) => {
@@ -55,11 +55,17 @@ const UploadHandler = async (files, path, callback, setTransferList) => {
                         uploadprogress.status = 2;
                         return newlist;
                     })
-                    message.error(`Upload ${file.name} error`);
+                    message.error(`Upload ${file.name} error: ${res.data.files[file.name].message}`);
                 }
             }
             await callback();
         } catch (error) {
+            setTransferList((prev) => {
+                let newlist = [...prev];
+                let uploadprogress = newlist.find((v) => v.id === id);
+                uploadprogress.status = 2;
+                return newlist;
+            })
             if (error.response !== undefined && error.response.data.message !== undefined) {
                 message.error(`Upload error: ${error.response.data.message}`);
             } else {

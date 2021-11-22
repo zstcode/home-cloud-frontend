@@ -69,6 +69,8 @@ function FileList(props) {
     const [selectedRows, setSelectedRows] = useState([]);
 
     const match = useRouteMatch();
+    const matchPara = match.params[0];
+
 
     const syncFolder = async () =>
         await FetchInfo(
@@ -84,14 +86,14 @@ function FileList(props) {
     // Fetch data when loading
     useEffect(() => {
         FetchInfo(
-            match.params[0],
+            matchPara,
             setFolder,
             setFileList,
             setCurrentFile,
             setPreviewVisable,
             folder.path
         );
-    }, [match, folder.path]);
+    }, [matchPara, folder.path]);
 
     // Columns of the FileList table
     // Some col will be hidden when width get smaller
