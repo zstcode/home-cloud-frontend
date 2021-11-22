@@ -43,13 +43,6 @@ const avatartSize = {
 // Component for user profile settings
 function Profile(props) {
     const [form] = Form.useForm();
-    const avatartUploader = useRef();
-
-    const handleAvatarUpload = async (event) => {
-        event.preventDefault();
-        await avatarUploadHandler(avatartUploader.current.files[0], props.setReload);
-        avatartUploader.current.value = "";
-    }
 
     const submitProfile = async (values) => {
         let formData = new URLSearchParams();
@@ -89,33 +82,16 @@ function Profile(props) {
             />
             <div id="profileContent">
                 <div id="avatarContainer">
-                    <input
-                        type="file"
-                        name="avatar"
-                        accept="image/*"
-                        ref={avatartUploader}
-                        onChange={handleAvatarUpload}
-                        style={{ display: "none" }}
-                    />
-                    {props.user.avatar ?
-                        <Avatar
-                            id="profileAvatar"
-                            size={avatartSize}
-                            src={props.user.avatar}
-                            onClick={() => avatartUploader.current.click()}
-                        /> :
-                        <Avatar id="profileAvatar"
-                            style={{
-                                backgroundColor:
-                                    "#00a2ae",
-                                fontSize: "25pt",
-                            }}
-                            size={avatartSize}
-                            onClick={() => avatartUploader.current.click()}
-                        >
-                            {props.user.username.slice(0, 2)}
-                        </Avatar>
-                    }
+                    <Avatar id="profileAvatar"
+                        style={{
+                            backgroundColor:
+                                "#00a2ae",
+                            fontSize: "25pt",
+                        }}
+                        size={avatartSize}
+                    >
+                        {props.user.username.slice(0, 2)}
+                    </Avatar>
                 </div>
                 <div id="profileFormContainer">
                     <Form

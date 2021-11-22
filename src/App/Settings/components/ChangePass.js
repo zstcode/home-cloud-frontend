@@ -50,6 +50,7 @@ function ChangePass(props) {
         formData.append("old", old_authKey);
         formData.append("new", new_authKey);
         formData.append("new_encryption", new_encryptionKey);
+        formData.append("new_account_salt", new_account_salt);
         try {
             // will return encryption key in cookies if success
             await axios.put("/api/user/password", formData);

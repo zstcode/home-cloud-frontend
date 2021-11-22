@@ -42,7 +42,6 @@ const App = () => {
         nickname: "",
         gender: 0,
         bio: "",
-        avartar: "",
         account_salt: "",
         encryption: false,
     });
@@ -84,7 +83,6 @@ const App = () => {
                         nickname: res.data["nickname"],
                         gender: res.data["gender"],
                         bio: res.data["bio"],
-                        avatar: res.data["avatar"],
                         account_salt: res.data["account_salt"],
                         encryption: res.data["encryption"]
                     });
@@ -165,11 +163,7 @@ const App = () => {
                                 <Button
                                     ghost
                                     size="large"
-                                    icon={user.avartar ?
-                                        <Avatar
-                                            id="avatar"
-                                            src={user.avartar}
-                                        /> :
+                                    icon={
                                         <Avatar id="avatar"
                                             style={{ backgroundColor: "#00a2ae" }}
                                         >
