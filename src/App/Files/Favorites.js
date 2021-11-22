@@ -26,6 +26,7 @@ const syncFavoriteList = async (setFavoriteFileList) => {
                     return {
                         name: v.Name,
                         position: v.Position,
+                        dir: v.IsDir,
                     }
                 })
             );

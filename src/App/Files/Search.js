@@ -31,6 +31,7 @@ const onSearch = async (value, setSearchList, setLoading) => {
                     return {
                         name: v.Name,
                         position: v.Position,
+                        dir: v.IsDir,
                     }
                 })
             );
