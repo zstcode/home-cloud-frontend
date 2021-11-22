@@ -167,8 +167,8 @@ function FileList(props) {
             title: "Last Modified Time",
             dataIndex: "updateTime",
             key: "time",
-            width: 160,
-            responsive: ["lg"],
+            width: 180,
+            responsive: ["xl"],
             sorter: (a, b) => {
                 return a.updateTime > b.updateTime;
             },

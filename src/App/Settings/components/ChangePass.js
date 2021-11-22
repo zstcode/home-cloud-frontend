@@ -1,6 +1,7 @@
 import { Form, Input, Button, message } from "antd";
 import { DeriveMasterKey, DeriveAuthKey, GenerateSalt, DeriveEncryptionKey } from "../../../utils/crypto";
 import axios from "axios";
+import { useRef } from "react";
 
 const formItemLayout = {
     labelCol: {
@@ -27,6 +28,7 @@ const tailFormItemLayout = {
 
 // ChangePass: The component for changing password tab
 function ChangePass(props) {
+    const form = useRef();
 
     const SecuritySubmitHandler = async (values) => {
         // use old password to derive auth key
@@ -56,6 +58,7 @@ function ChangePass(props) {
             await axios.put("/api/user/password", formData);
             // If error, will not return 200
             message.info("Change password success");
+            form.current.resetFields();
             props.setReload((p) => p + 1);
         } catch (error) {
             message.error(`Change password error: ${error.response.data.message}`);
@@ -67,6 +70,7 @@ function ChangePass(props) {
             name="security"
             scrollToFirstError
             onFinish={SecuritySubmitHandler}
+            ref={form}
             {...formItemLayout}
         >
             <Form.Item

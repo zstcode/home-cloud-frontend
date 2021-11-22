@@ -19,7 +19,7 @@ function Setting(props) {
                 <div id="settingContainer">
                     <Tabs>
                         <TabPane tab="Change Password" key="/changepass">
-                            <ChangePass user={props.user} />
+                            <ChangePass user={props.user} setReload={props.setReload}/>
                         </TabPane>
                         <TabPane tab="Encryption" key="/encryption">
                             <EncryptionSetting />

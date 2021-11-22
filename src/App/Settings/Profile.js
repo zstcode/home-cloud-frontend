@@ -1,7 +1,6 @@
 import { Layout, PageHeader, Avatar, message } from "antd";
-import React, { useRef } from "react";
+import React from "react";
 import { Form, Input, Select, Button } from "antd";
-import avatarUploadHandler from "./utils/avatarUpload";
 import axios from "axios";
 import "./Profile.scss";
 
@@ -46,21 +45,10 @@ function Profile(props) {
 
     const submitProfile = async (values) => {
         let formData = new URLSearchParams();
-        if (values.username !== props.user.username) {
-            formData.append("username", values.username);
-        }
-        if (values.email) {
-            formData.append("email", values.email);
-        }
-        if (values.nickname) {
-            formData.append("nickname", values.nickname);
-        }
-        if (values.gender) {
-            formData.append("gender", values.gender);
-        }
-        if (values.bio) {
-            formData.append("bio", values.bio);
-        }
+        formData.append("email", values.email);
+        formData.append("nickname", values.nickname);
+        formData.append("gender", values.gender);
+        formData.append("bio", values.bio);
         try {
             let res = await axios.post("/api/user/profile", formData);
             if (res.data.success === 0) {
@@ -106,14 +94,8 @@ function Profile(props) {
                             name="username"
                             label="Username"
                             initialValue={props.user.username}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your username",
-                                },
-                            ]}
                         >
-                            <Input />
+                            <Input disabled style={{ cursor: "default" }} />
                         </Form.Item>
                         <Form.Item
                             name="email"
@@ -140,12 +122,12 @@ function Profile(props) {
                         <Form.Item
                             name="gender"
                             label="Gender"
-                            initialValue={props.user.gender}
+                            initialValue={`${props.user.gender}`}
                         >
                             <Select placeholder="select your gender">
-                                <Option value="male">Male</Option>
-                                <Option value="female">Female</Option>
-                                <Option value="other">Other</Option>
+                                <Option value="0">Male</Option>
+                                <Option value="1">Female</Option>
+                                <Option value="2">Other</Option>
                             </Select>
                         </Form.Item>
 
