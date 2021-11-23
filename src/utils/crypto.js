@@ -87,17 +87,12 @@ async function DeriveEncryptionKey(masterKey, len) {
 
 
 
-// GenerateSalt: Generate a random salt for sign up
+// GenerateSalt: Generate a random salt
 async function GenerateSalt(len) {
-    len = len / 4;
+    len = len >> 3;
     const n = new Uint8Array(len);
-    const chars =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^&*()_+=-/";
-    let salt = [];
-    crypto.getRandomValues(n).forEach((v) => {
-        salt.push(chars[v % chars.length]);
-    });
-    return salt.join("");
+    crypto.getRandomValues(n);
+    return Buffer.from(n).toString("hex");
 }
 
 export { DeriveMasterKey, DeriveAuthKey, DeriveEncryptionKey, GenerateSalt };
