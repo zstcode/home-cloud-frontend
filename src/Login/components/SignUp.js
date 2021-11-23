@@ -49,6 +49,7 @@ function SignUp(props) {
         try {
             // will return encryption in the cookies if success
             await axios.post("/api/register", formData);
+            message.info("Sign up success! ");
             history.replace("/login");
         } catch (error) {
             if (error.response !== undefined && error.response.data.message !== undefined) {
@@ -105,26 +106,6 @@ function SignUp(props) {
                 ]}
             >
                 <Input.Password />
-            </Form.Item>
-
-            <Form.Item
-                name="agreement"
-                valuePropName="checked"
-                rules={[
-                    {
-                        validator: (_, value) =>
-                            value
-                                ? Promise.resolve()
-                                : Promise.reject(
-                                    new Error("Should accept agreement")
-                                ),
-                    },
-                ]}
-                {...formTailLayout}
-            >
-                <Checkbox>
-                    I have read the agreement
-                </Checkbox>
             </Form.Item>
 
             <Form.Item {...formTailLayout}>

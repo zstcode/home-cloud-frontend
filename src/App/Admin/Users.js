@@ -35,6 +35,7 @@ const syncUserList = async (setUserList) => {
                 key: idx,
                 name: v.Name,
                 quota: v.Quota,
+                status: v.Status,
                 encryption: v.Encryption,
             };
         });
@@ -56,13 +57,13 @@ const resetPassword = async (user) => {
     }
     try {
         let formData = new URLSearchParams();
-        formData.append("user", user.name);
+        formData.append("reset_user", user.name);
         const resetData = await axios.post("/api/admin/reset_password", formData);
         if (resetData.data.success !== 0) {
             message.error(`Reset password for ${user.name} error: ${resetData.data.message}`);
             return
         }
-        const npassword = resetData.data.npassword;
+        const npassword = resetData.data.result;
         Modal.info({
             title: 'Password Reset Completes',
             content: (
@@ -87,21 +88,43 @@ const resetPassword = async (user) => {
 }
 
 // deleteUser: delete a user based on its username
-const deleteUser = async (deletedUser, syncUserList) => {
+const deleteUser = async (deletedUser, syncUserList, setUserList) => {
     try {
         let formData = new URLSearchParams();
-        formData.append("user", deletedUser.name);
+        formData.append("delete_user", deletedUser.name);
         const deleteUserData = await axios.post("/api/admin/delete_user", formData);
         if (deleteUserData.data.success !== 0) {
             message.error(`Delete user ${deletedUser.name} error: ${deleteUserData.data.message}`);
             return
         }
-        await syncUserList();
+        message.info(`Delete user ${deletedUser.name} success! `);
+        await syncUserList(setUserList);
     } catch (error) {
         if (error.response !== undefined && error.response.data.message !== undefined) {
             message.error(`Delete user ${deletedUser.name} error: ${error.response.data.message}`);
         } else {
             message.error(`Delete user ${deletedUser.name} error: ${error}`);
+        }
+    }
+}
+
+// toggleAdmin: Set user as admin or normal user
+const toggleAdmin = async (toggleUser, syncUserList, setUserList) => {
+    try {
+        let formData = new URLSearchParams();
+        formData.append("toggle_user", toggleUser.name);
+        const res = await axios.post("/api/admin/toggle_admin", formData);
+        if (res.data.success !== 0) {
+            message.error(`Set user ${toggleUser.name} permission error: ${res.data.message}`);
+            return
+        }
+        message.info(`Set user ${toggleUser.name} permission success! `);
+        await syncUserList(setUserList);
+    } catch (error) {
+        if (error.response !== undefined && error.response.data.message !== undefined) {
+            message.error(`Set user ${toggleUser.name} permission error: ${error.response.data.message}`);
+        } else {
+            message.error(`Set user ${toggleUser.name} permission error: ${error}`);
         }
     }
 }
@@ -134,7 +157,7 @@ function Users(props) {
             },
             render: (record) => {
                 return (
-                    <Tooltip placement="topLeft" title={record.username}>
+                    <Tooltip placement="topLeft" title={record.name}>
                         <span>{record.name}</span>
                     </Tooltip>
                 )
@@ -143,7 +166,7 @@ function Users(props) {
         {
             title: 'Role',
             key: 'role',
-            width: "15%",
+            width: "10%",
             ellipsis: {
                 showTitle: false,
             },
@@ -165,32 +188,45 @@ function Users(props) {
         {
             title: 'Action',
             key: 'action',
-            width: "55%",
+            width: "60%",
             ellipsis: {
                 showTitle: false,
             },
             render: (record) => (
-                <Space size="middle">
+                <Space size="small">
                     <Button type="primary" onClick={() => {
                         setCurrentUser(record);
                         setQuotaVisible(true);
-                    }}>Set Quota</Button>
-                    <Button type="primary" onClick={() => resetPassword(currentUser)}>Reset Password</Button>
+                    }}>Quota</Button>
                     <Popconfirm
-                        title={`Are you sure to delete user ${record.name}?`}
+                        title={`Are you sure to reset password for user ${record.name}?`}
                         placement="topRight"
-                        onConfirm={() => {
-                            if (record.name === props.user.name) {
-                                message.error("You cannot delete yourself! ");
-                                return
-                            } else {
-                                deleteUser(record, syncUserList);
-                            }
-                        }}
+                        onConfirm={() => resetPassword(record)}
                     >
-                        <Button type="primary">Delete User</Button>
+                        <Button type="primary">Reset Password</Button>
                     </Popconfirm>
-
+                    {record.name !== props.user.username ?
+                        <Popconfirm
+                            title={`Are you sure to delete user ${record.name}?`}
+                            placement="topRight"
+                            onConfirm={() => {
+                                if (record.name === props.user.name) {
+                                    message.error("You cannot delete yourself! ");
+                                    return
+                                } else {
+                                    deleteUser(record, syncUserList, setUserList);
+                                }
+                            }}
+                        >
+                            <Button type="primary">Delete</Button>
+                        </Popconfirm> : <></>
+                    }
+                    {record.name !== props.user.username ?
+                        <Button type="primary"
+                            onClick={() => toggleAdmin(record, syncUserList, setUserList)}>
+                            {record.status === 0 ? "Set Admin" : "Set Normal"}
+                        </Button>
+                        : <></>}
                 </Space>
             ),
         },
@@ -214,6 +250,7 @@ function Users(props) {
                     user={currentUser}
                     setVisible={setQuotaVisible}
                     syncUserList={syncUserList}
+                    setUserList={setUserList}
                 />
                 <Content>
                     <div id="usersTableContainer">

@@ -4,30 +4,44 @@ import { useRef } from "react";
 import { formatBytes } from "../../Files/utils/utils";
 
 const { Option } = Select;
+const { confirm } = Modal;
 
 // handleSubmit: Submit the set quota request for a user
-const handleSubmit = async (values, user, setVisible, syncUserList) => {
-    let formData = new URLSearchParams();
-    formData.append("user", user.name);
-    formData.append("quota", parseInt(values.quota) * Math.pow(1024, parseInt(values.unit)));
-    try {
-        let res = await axios.post("/api/admin/set_user_quota", formData);
-        if (res.data.success !== 0) {
-            message.error(
-                `Set quota for ${user.name} ${res.data.message}! `
-            );
-        } else {
-            message.info(`Set quota for ${user.name} success! `);
+const handleSubmit = async (values, user, setVisible, syncUserList, setUserList) => {
+    const newSize = parseInt(values.quota) * Math.pow(1024, parseInt(values.unit));
+    const submitQuotaSetting = async () => {
+        let formData = new URLSearchParams();
+        formData.append("modified_user", user.name);
+        formData.append("quota", newSize);
+        try {
+            let res = await axios.post("/api/admin/set_user_quota", formData);
+            if (res.data.success !== 0) {
+                message.error(
+                    `Set quota for ${user.name} error: ${res.data.message}! `
+                );
+            } else {
+                message.info(`Set quota for ${user.name} success! `);
+            }
+        } catch (error) {
+            if (error.response !== undefined && error.response.data.message !== undefined) {
+                message.error(`Set quota for ${user.name} error: ${error.response.data.message}! `);
+            } else {
+                message.error(`Set quota for ${user.name} error: ${error}`);
+            }
         }
-    } catch (error) {
-        if (error.response !== undefined && error.response.data.message !== undefined) {
-            message.error(`Set quota for ${user.name} error: ${error.response.data.message}! `);
-        } else {
-            message.error(`Set quota for ${user.name} error: ${error}`);
-        }
+        setVisible(false);
+        await syncUserList(setUserList);
     }
-    setVisible(false);
-    await syncUserList();
+    if (newSize < user.quota) {
+        confirm({
+            title: "Alert",
+            content: "New quota is less than previous quota. The user may not be able to upload new files! ",
+            onOk() { submitQuotaSetting() },
+            onCancel() { return }
+        })
+    } else {
+        await submitQuotaSetting();
+    }
 };
 
 // unitMapping: Map the unit of storage quota to options in the dialog
@@ -90,7 +104,8 @@ function SetQuotaDialog(props) {
                         values,
                         props.user,
                         props.setVisible,
-                        props.syncUserList
+                        props.syncUserList,
+                        props.setUserList
                     )
                 }
                 labelCol={{ span: 6 }}
@@ -113,7 +128,7 @@ function SetQuotaDialog(props) {
                         },
                     ]}
                 >
-                    <Input type="number" addonAfter={unitSelector} />
+                    <Input type="number" min="0" addonAfter={unitSelector} />
                 </Form.Item>
             </Form>
         </Modal>
