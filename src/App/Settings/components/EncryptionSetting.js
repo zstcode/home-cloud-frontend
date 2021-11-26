@@ -42,7 +42,7 @@ function EncryptionSetting(props) {
                 let formData = new URLSearchParams();
                 formData.append("algorithm", values.algorithm);
                 try {
-                    let res = await axios.post("/api/file/change_algorithm", formData);
+                    let res = await axios.post("/api/user/change_algorithm", formData);
                     if (res.data.success === 0) {
                         message.info("Change encryption algorithm success! You will be logged out! ")
                         history.push("/login");
