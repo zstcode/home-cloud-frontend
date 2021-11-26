@@ -39,6 +39,7 @@ function ChangePass(props) {
             512
         );
         const old_authKey = await DeriveAuthKey(old_masterKey, 256);
+        const old_encryptionKey = await DeriveEncryptionKey(old_masterKey, 256);
         // Use new password to derive auth key and encryption key
         const new_account_salt = await GenerateSalt(256);
         const new_masterKey = await DeriveMasterKey(
@@ -50,6 +51,7 @@ function ChangePass(props) {
         const new_encryptionKey = await DeriveEncryptionKey(new_masterKey, 256);
         let formData = new URLSearchParams();
         formData.append("old", old_authKey);
+        formData.append("old_encryption", old_encryptionKey);
         formData.append("new", new_authKey);
         formData.append("new_encryption", new_encryptionKey);
         formData.append("new_account_salt", new_account_salt);
