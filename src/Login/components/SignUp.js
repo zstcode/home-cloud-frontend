@@ -8,6 +8,7 @@ import {
 } from "../../utils/crypto";
 import { useHistory } from "react-router";
 import { message } from "antd";
+import { useRef } from "react";
 
 const formLayout = {
     labelCol: { span: 8 },
@@ -30,6 +31,7 @@ const formTailLayout = {
 // Component for sign up tab
 function SignUp(props) {
     const history = useHistory();
+    const form=useRef();
 
     async function registerHandler(values) {
         let formData = new URLSearchParams();
@@ -49,6 +51,7 @@ function SignUp(props) {
         try {
             await axios.post("/api/register", formData);
             message.info("Sign up success! ");
+            form.current.resetFields();
             history.replace("/login");
         } catch (error) {
             if (error.response !== undefined && error.response.data.message !== undefined) {
@@ -59,7 +62,7 @@ function SignUp(props) {
         }
     }
     return (
-        <Form name="signup" {...formLayout} onFinish={registerHandler}>
+        <Form name="signup" {...formLayout} onFinish={registerHandler} ref={form}>
             <Form.Item
                 label="Username"
                 name="username"
