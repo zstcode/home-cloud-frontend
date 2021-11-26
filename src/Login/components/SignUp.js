@@ -47,7 +47,6 @@ function SignUp(props) {
         formData.append("accountSalt", account_salt);
         formData.append("encryption", encryptionKey);
         try {
-            // will return encryption in the cookies if success
             await axios.post("/api/register", formData);
             message.info("Sign up success! ");
             history.replace("/login");
