@@ -44,6 +44,7 @@ const App = () => {
         bio: "",
         account_salt: "",
         encryption: false,
+        encryptionAlgo: 0,
     });
     // transferList: {id,name,status,progress}[]->upload file history 
     const [transferList, setTransferList] = useState([]);
@@ -84,7 +85,8 @@ const App = () => {
                         gender: res.data["gender"],
                         bio: res.data["bio"],
                         account_salt: res.data["account_salt"],
-                        encryption: res.data["encryption"]
+                        encryption: res.data["encryption"],
+                        encryptionAlgo: res.data["encryption_algo"],
                     });
                 } else {
                     message.error(`Fetch user data error: ${res.data["message"]}`);

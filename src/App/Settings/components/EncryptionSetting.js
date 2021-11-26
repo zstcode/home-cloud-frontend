@@ -58,7 +58,11 @@ function EncryptionSetting(props) {
     }
     return (
         <Form name="encryption-setting" {...formItemLayout} onFinish={submitEncryptionAlgoHandler}>
-            <Form.Item name="algorithm" label="Encryption Algorithm" rules={[{ required: true }]}>
+            <Form.Item name="algorithm"
+                label="Encryption Algorithm"
+                rules={[{ required: true }]}
+                initialValue={props.user.encryptionAlgo.toString()}
+            >
                 <Select>
                     <Option value="0">None</Option>
                     <Option value="1">AES-256-GCM</Option>
