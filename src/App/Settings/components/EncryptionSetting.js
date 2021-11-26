@@ -60,10 +60,10 @@ function EncryptionSetting(props) {
         <Form name="encryption-setting" {...formItemLayout} onFinish={submitEncryptionAlgoHandler}>
             <Form.Item name="algorithm" label="Encryption Algorithm" rules={[{ required: true }]}>
                 <Select>
-                    <Option value="None">None</Option>
-                    <Option value="AES-256-GCM">AES-256-GCM</Option>
-                    <Option value="ChaCha20-Poly1305">ChaCha20-Poly1305</Option>
-                    <Option value="XChaCha20-Poly1305">XChaCha20-Poly1305</Option>
+                    <Option value="0">None</Option>
+                    <Option value="1">AES-256-GCM</Option>
+                    <Option value="2">ChaCha20-Poly1305</Option>
+                    <Option value="3">XChaCha20-Poly1305</Option>
                 </Select>
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>

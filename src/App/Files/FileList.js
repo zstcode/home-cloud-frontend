@@ -277,7 +277,7 @@ function FileList(props) {
                     () => history.push("/files" + folder.path.split("/").slice(0, -1).join("/")) :
                     null
                 }
-                title={folder.name}
+                title={folder.root ? "Home" : folder.name}
                 tags={
                     props.user.encryption ? (
                         <Tag color="blue">Encrypted</Tag>
