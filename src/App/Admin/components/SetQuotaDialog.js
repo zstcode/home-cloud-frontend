@@ -77,7 +77,7 @@ function SetQuotaDialog(props) {
             ]}
             initialValue={unitMapping(formatSize[1])}
         >
-            <Select>
+            <Select style={{ width: "75px" }}>
                 <Option value="0">Bytes</Option>
                 <Option value="1">KB</Option>
                 <Option value="2">MB</Option>
