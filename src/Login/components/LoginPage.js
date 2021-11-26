@@ -33,21 +33,21 @@ function LoginPage(props) {
         formData.append("username", values.username);
         // Use pre-login to fetch the salt of the account
         // If the account not exits, it will get a random result
-        const preLogin = await axios.post("/api/pre-login", formData);
-        const account_salt = preLogin.data["account_salt"];
-        const masterKey = await DeriveMasterKey(
-            values.password,
-            account_salt,
-            512
-        );
-        const authKey = await DeriveAuthKey(masterKey, 256);
-        formData.append("password", authKey);
-        const encryptionKey = await DeriveEncryptionKey(masterKey, 256);
-
-        // The server will return the encryptionKey in the cookies with path parameter
-        formData.append("encryptionKey", encryptionKey);
-        formData.append("remember", values.remember ? 1 : 0);
         try {
+            const preLogin = await axios.post("/api/pre-login", formData);
+            const account_salt = preLogin.data["account_salt"];
+            const masterKey = await DeriveMasterKey(
+                values.password,
+                account_salt,
+                512
+            );
+            const authKey = await DeriveAuthKey(masterKey, 256);
+            formData.append("password", authKey);
+            const encryptionKey = await DeriveEncryptionKey(masterKey, 256);
+
+            // The server will return the encryptionKey in the cookies with path parameter
+            formData.append("encryptionKey", encryptionKey);
+            formData.append("remember", values.remember ? 1 : 0);
             await axios.post("/api/login", formData);
             let { from } = location.state || { from: { pathname: "/" } };
             history.replace(from);
