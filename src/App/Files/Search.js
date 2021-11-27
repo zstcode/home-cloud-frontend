@@ -27,8 +27,9 @@ const onSearch = async (value, setSearchList, setLoading) => {
         let res = await axios.post("/api/file/search", formData);
         if (res.data["success"] === 0) {
             setSearchList(
-                res.data["result"].map((v) => {
+                res.data["result"].map((v, idx) => {
                     return {
+                        key: idx,
                         name: v.Name,
                         position: v.Position,
                         dir: v.IsDir,

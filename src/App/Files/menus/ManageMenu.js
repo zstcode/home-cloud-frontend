@@ -119,11 +119,11 @@ function ManageMenu(props) {
                 Favorite
             </Menu.Item>
             <Menu.Item
-                key="encryption"
+                key="folderRename"
                 className="filedropMenuItem showinMobile"
-                onClick={props.callback.encryption}
+                onClick={props.callback.folderRename}
             >
-                Encryption
+                Folder Rename
             </Menu.Item>
         </Menu>
     );

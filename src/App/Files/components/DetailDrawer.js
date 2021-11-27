@@ -1,10 +1,11 @@
 import { Drawer, List } from "antd";
+import { formatBytes } from "../utils/utils";
 
 // File details drawer
 function DetailDrawser(props) {
     const data = [
         `Name: ${props.file.name}`,
-        `Size: ${props.file.size}`,
+        `Size: ${props.file.size === "NA" ? "NA" : formatBytes(props.file.size)}`,
         `Path: ${props.file.position}`,
         `Create Time: ${props.file.createTime}`,
         `Last Modified Time: ${props.file.updateTime}`,

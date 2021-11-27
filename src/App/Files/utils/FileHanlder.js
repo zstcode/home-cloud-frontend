@@ -84,6 +84,9 @@ const FetchInfo = async (
     setPreviewVisable,
     currentFolderPath
 ) => {
+    if ("/" + path === currentFolderPath) {
+        return;
+    }
     try {
         let folderPath = "/";
         if (path.length > 0 && path[path.length - 1] === "/") {
